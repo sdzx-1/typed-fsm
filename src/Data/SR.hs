@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 
 module Data.SR where
 
@@ -13,3 +14,6 @@ class SingI a where
 
 class Reify (a :: ps) where
   reifyProxy :: Proxy a -> ps
+
+reify :: forall ps (a :: ps). (Reify a) => ps
+reify = reifyProxy (Proxy :: Proxy a)
