@@ -92,6 +92,14 @@ executable example
     buildable: False
   build-depends: base
                , typed-fsm
+               , sdl2
+               , sdl2-ttf
+               , mtl
+               , stm
+               , unordered-containers
+               , dependent-map
+               , dependent-sum
+               , containers
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: example
