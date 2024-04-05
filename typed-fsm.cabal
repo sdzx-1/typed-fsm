@@ -1,7 +1,7 @@
 cabal-version:      3.0
 -- The cabal-version field refers to the version of the .cabal specification,
 -- and can be different from the cabal-install (the tool) version and the
--- Cabal (the library) version you are using. As such, the Cabal (the library)
+
 -- version used must be equal or greater than the version stated in this field.
 -- Starting from the specification version 2.2, the cabal-version field must be
 -- the first thing in the cabal file.
@@ -96,6 +96,7 @@ executable example
                , sdl2-ttf
                , mtl
                , stm
+               , linear
                , unordered-containers
                , dependent-map
                , dependent-sum
@@ -103,6 +104,7 @@ executable example
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: example
+  other-modules: Utils
 
 test-suite typed-fsm-test
     -- Import common warning flags.
