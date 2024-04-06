@@ -33,6 +33,10 @@ reifySomeOperateInput (SomeOperate (_ :: Operate m ia i)) =
 
 type OpResult ps m a = (Either (SomeOperate ps m a) a)
 
+type Op ps state o i = Operate (StateT state IO) (At () (o :: ps)) (i :: ps)
+
+type SomeOp ps state = SomeOperate ps (StateT state IO) ()
+
 runOp
   :: forall ps event state a (input :: ps) (output :: ps)
    . ( SingI input
