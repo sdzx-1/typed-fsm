@@ -15,8 +15,7 @@ import Linear
 import SDL
 import SDL.Font (Font)
 import qualified SDL.Font as Font
-
-type Point' = Point V2 Int
+import Type
 
 type CharCache = HashMap Char Texture
 type CharCacheRef = IORef CharCache
@@ -27,11 +26,6 @@ data DrawEnv = DrawEnv
   , _charCacheRef :: CharCacheRef
   }
 
-data MyEvent
-  = MyMouseMotion (Point V2 Int32) Timestamp
-  | MyTimeout
-  deriving (Show, Eq, Ord)
-
 eventToKP :: Event -> Maybe MyEvent
 eventToKP e = case eventPayload e of
   MouseMotionEvent (MouseMotionEventData _ _ _ pos _) ->
@@ -40,17 +34,11 @@ eventToKP e = case eventPayload e of
 
 makeMyEvent :: Maybe () -> [Event] -> [MyEvent]
 makeMyEvent ma events =
-  let res =
-        reverse
-          ( foldl'
-              ( \b a ->
-                  case eventToKP a of
-                    Nothing -> b
-                    Just a' -> a' : b
-              )
-              []
-              events
-          )
+  let fun b a =
+        case eventToKP a of
+          Nothing -> b
+          Just a' -> a' : b
+      res = reverse (foldl' fun [] events)
    in case ma of
         Nothing -> res
         Just _ -> MyTimeout : res
@@ -96,3 +84,7 @@ drawStrings :: DrawEnv -> [String] -> (Int, Int) -> IO ()
 drawStrings de sts (x, y) = do
   forM_ (zip [0 ..] sts) $ \(i, st) -> do
     drawString de st (x, y + i * 20)
+
+contains :: Rect -> Point' -> Bool
+contains (Rect rx ry w h) (Point x y) =
+  (rx <= x && x <= rx + w) && (ry <= y && y <= ry + h)

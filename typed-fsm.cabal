@@ -14,7 +14,7 @@ cabal-version:      3.0
 name:               typed-fsm
 
 -- The package version.
--- See the Haskell package versioning policy (PVP) for standards
+
 -- guiding when and how versions should be incremented.
 -- https://pvp.haskell.org
 -- PVP summary:     +-+------- breaking API changes
@@ -100,11 +100,20 @@ executable example
                , unordered-containers
                , dependent-map
                , dependent-sum
+               , dependent-sum-template
                , containers
+               , typed-fsm
+               , microlens
+               , microlens-mtl
+               , microlens-th
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: example
   other-modules: Utils
+               , Handler
+               , Type
+               , EventToMsg
+  ghc-options: -threaded
 
 test-suite typed-fsm-test
     -- Import common warning flags.
