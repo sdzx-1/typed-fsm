@@ -1,2 +1,4 @@
-# typed-fsm
+typed-fsm
+==========
+
 typed finite-state machine
