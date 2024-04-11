@@ -15,7 +15,7 @@ mouseDepMap =
         :=> GenMsg
           ( \(MotionState rect' _ _ _) event -> case event of
               MyMouseMotion (fmap fromIntegral -> p) tms ->
-                if rect' `contains` fmap fromIntegral p
+                if rect' `contains` p
                   then Just $ SomeMsg (MoveIn p tms)
                   else Nothing
               _ -> Nothing
