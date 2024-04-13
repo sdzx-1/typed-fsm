@@ -51,7 +51,7 @@ data At :: Type -> k -> k -> Type where
 m >> f = ibind (\(At _) -> f) m
 ```
 
-以下是我对(~>)的理解：通过GADT，让值包含类型的信息，然后通过(~>), pattern match 将类型传递到后续的函数
+以下是我对(\~>)的理解：通过GADT，让值包含类型的信息，然后通过(\~>), pattern match 将类型传递到后续的函数
 ```haskell
 data V = A | B 
 
