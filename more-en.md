@@ -21,7 +21,11 @@ class IMonad m where
 No detailed description, just a link to this [lecture](https://github.com/dorchard/effect-monad/blob/master/docs/ixmonad-fita14.pdf)。
 
 > In order to use do syntax, the QualifiedDo extension is required. The QualifiedDo extension allows us to overload only the two operators (>>=) and (>>). Prior to ghc 9.10.1, this extension had [serious issues](https://gitlab.haskell.org/ghc/ghc/-/issues/21206). But this [MR](https://gitlab.haskell.org/ghc/ghc/-/merge_requests/10140) fixes these problems! ! The latest ghc 9.10.1 contains this MR. So this library requires you to update the ghc version to 9.10.1.
->> Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
+>> Install ghc 9.10.1 using ghcup
+```shell
+ghcup config add-release-channel https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-prereleases-0.0.8.yaml
+ghcup install ghc 9.10.0.20240413
+```
 
 What I want to introduce is the McBride Indexed Monad, the earliest paper [here](https://personal.cis.strath.ac.uk/conor.mcbride/Kleisli.pdf).
 The following is the detailed definition of IFunctor, IMonad, (>>=), (>>)

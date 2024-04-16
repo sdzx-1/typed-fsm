@@ -5,25 +5,6 @@ allow-newer: all
 
 source-repository-package
   type: git
-  location: https://github.com/sdzx-1/dependent-sum-template.git
-  tag: 526d77d8ff04975e70cb5e09141653d1d5a9ced1
-
-source-repository-package
-  type: git
-  location: https://github.com/sdzx-1/reflection.git
-  tag: 6a0d64d437530b3d32ce1e8ef020f3bd79770e6c
-
-source-repository-package
-  type: git
-  location: https://github.com/sdzx-1/free.git
-  tag: 4741fad63e5204551d0c7a9814bba48c961a2393
-
-source-repository-package
-  type: git
   location: https://github.com/sdzx-1/lens.git
-  tag: aeb82cf83c1e3c4620a7636f471d2bf4d029929a 
+  tag: 50021f026873dc97d28dbc2d0cb728e2e4f82d9f 
 
-source-repository-package
-  type: git
-  location: https://github.com/sdzx-1/sdl2-ttf.git
-  tag: 5aff1a201184f24819fc47335772d2c063580dfd 

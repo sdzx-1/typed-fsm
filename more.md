@@ -22,7 +22,12 @@ class IMonad m where
 
 
 > 为了使用do语法，需要QualifiedDo扩展。QualifiedDo扩展允许我们仅重载(>>=),(>>)这两个运算符。在ghc 9.10.1之前，这个扩展存在[严重的问题](https://gitlab.haskell.org/ghc/ghc/-/issues/21206)。但这个[MR](https://gitlab.haskell.org/ghc/ghc/-/merge_requests/10140)修复了这些问题！！最新的ghc 9.10.1包含了这个MR。所以这个库需要你更新ghc版本到9.10.1。
->> 使用ghcup 安装 ghc 9.10.1 [这里有足够的帮助](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
+>> 使用ghcup 安装 ghc 9.10.1 
+```shell
+ghcup config add-release-channel https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-prereleases-0.0.8.yaml
+ghcup install ghc 9.10.0.20240413
+```
+
 
 我要介绍的就是McBride Indexed Monad，最早的论文[在此](https://personal.cis.strath.ac.uk/conor.mcbride/Kleisli.pdf)。
 以下是 IFunctor, IMonad, (>>=), (>>)的详细定义

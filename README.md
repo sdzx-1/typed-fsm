@@ -23,7 +23,11 @@ Advantages of type-fsm
 ## Install ghc 9.10.1
 This library requires you to update the ghc version to 9.10.1.
 
-Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
+Install ghc 9.10.1 using ghcup 
+```shell
+ghcup config add-release-channel https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-prereleases-0.0.8.yaml
+ghcup install ghc 9.10.0.20240413
+```
 
 ## 1. Mouse Motion Example
 ![msg](data/png/motion_trans_msg.png)
