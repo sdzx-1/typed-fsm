@@ -19,6 +19,18 @@ Advantages of type-fsm
 
 [详细设计解释](./more.md)
 
-## Run example
-1. Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
-2. cabal run motion  --flags="BuildExample"
+# Run example
+## Install ghc 9.10.1
+This library requires you to update the ghc version to 9.10.1.
+
+Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
+
+## 1. Mouse Motion Example
+![msg](data/png/motion_trans_msg.png)
+[exmaple explanation](./more-en.md)
+### cabal run motion  --flags="BuildExample"
+
+## 2. ATM FSM Example
+![msg](data/png/atm.png)
+[confidence-in-types](https://github.com/CodingCellist/talks/blob/main/2024-03-06-spls-st-andrews/confidence-in-types.pdf)
+### cabal run atm  --flags="BuildExample"
