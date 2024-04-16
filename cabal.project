@@ -2,10 +2,6 @@ packages: .
 
 allow-newer: all
 
--- source-repository-package
---   type: git
---   location: https://github.com/obsidiansystems/dependent-sum-template.git
---   tag:  846df3885404b3c343453a2aa786eb6433a346d5
 
 source-repository-package
   type: git
