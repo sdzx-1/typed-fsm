@@ -49,7 +49,6 @@ type family Less3 (n :: N) :: Constraint where
   Less3 Z = ()
   Less3 (S Z) = ()
   Less3 (S (S Z)) = ()
-  Less3 (S (S (S Z))) = ()
   Less3 _ = TypeError (Text "test must less 3")
 
 data CheckPINResult :: ATMSt -> Type where

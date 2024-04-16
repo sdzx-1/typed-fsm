@@ -23,16 +23,15 @@ import TypedFsm.Core
 import TypedFsm.Driver
 
 checkResult
-  :: forall (n1 :: N) n
-   . (SingI n, Reify n, Less3 n1, SingI n1, Reify n1)
-  => Proxy n1
-  -> Int
+  :: forall n
+   . (SingI n, Reify n, Less3 n)
+  => Int
   -> Operate (StateT InternalState IO) CheckPINResult ('CheckPin n)
-checkResult _ i = I.do
+checkResult i = I.do
   At userPin <- liftm $ use pin
   if i == userPin
     then LiftM $ pure (ireturn Correct)
-    else LiftM $ pure (ireturn (Incorrect @n1))
+    else LiftM $ pure (ireturn (Incorrect @n))
 
 checkPinFun
   :: forall (n :: N)
@@ -41,16 +40,16 @@ checkPinFun
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin (n :: N))
 checkPinFun i = I.do
   case sing @n of
-    (SS SZ :: SN n1) -> checkResult @n1 Proxy i
-    (SS (SS SZ) :: SN n1) -> checkResult @n1 Proxy i
-    (SS (SS (SS SZ)) :: SN n1) -> I.do
+    SS SZ -> checkResult i
+    SS (SS SZ) -> checkResult i
+    SS (SS (SS SZ)) -> I.do
       At userPin <- liftm $ use pin
       if i == userPin
         then LiftM $ pure (ireturn Correct)
-        else LiftM $ do 
+        else LiftM $ do
           liftIO $ putStrLn "-> test 3 times, eject card!"
           pure (ireturn EjectCard)
-    _ -> error "np" 
+    _ -> error "np"
 
 readyHandler :: Op ATMSt InternalState Ready Ready
 readyHandler = I.do
