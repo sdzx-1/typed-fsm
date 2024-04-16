@@ -34,3 +34,35 @@ Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/
 ![msg](data/png/atm.png)
 [confidence-in-types](https://github.com/CodingCellist/talks/blob/main/2024-03-06-spls-st-andrews/confidence-in-types.pdf)
 ### cabal run atm  --flags="BuildExample"
+
+result:
+```shell
+start ATM
+-> current ATMSt: Ready
+ins card
+-> current ATMSt: CardInserted Z
+checkPin 1
+-> current ATMSt: CardInserted (S Z)
+checkPin 2
+-> current ATMSt: CardInserted (S (S Z))
+checkPin 3
+-> test 3 times, eject card!
+-> current ATMSt: Ready
+ins card
+-> current ATMSt: CardInserted Z
+checkPin 1234
+-> current ATMSt: Session
+getAmount
+-> User Amount: 1000
+-> current ATMSt: Session
+dispense 100
+-> Use dispense 100
+-> Now User Amount: 900
+-> current ATMSt: Session
+dispense 100
+-> Use dispense 100
+-> Now User Amount: 800
+-> current ATMSt: Session
+eject
+-> current ATMSt: Ready
+```
