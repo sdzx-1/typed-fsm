@@ -150,7 +150,7 @@ liftm m = LiftM (returnAt <$> m)
 # Example
 ## run example
 1. ghcup 安装 ghc 9.10.1   
-2. cabal run example  --flags="BuildExample"
+2. cabal run motion  --flags="BuildExample"
 
 ## mouse motion example
 ### 例子解释

@@ -29,7 +29,7 @@ main :: IO ()
 main = do
   initialize [InitVideo]
   Font.initialize
-  font <- Font.load "data/fonts/SourceCodePro-Regular.otf" 20
+  font <- Font.load "../../data/fonts/SourceCodePro-Regular.otf" 20
   window <- createWindow "test" defaultWindow
   renderer <- createRenderer window (-1) defaultRenderer
   ccref <- initCharCache

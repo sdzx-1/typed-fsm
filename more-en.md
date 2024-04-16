@@ -149,7 +149,7 @@ liftm m = LiftM (returnAt <$> m)
 # Example
 ## Run example
 1. Install ghc 9.10.1 using ghcup [Enough help here](https://discourse.haskell.org/t/ghc-9-10-1-alpha1-is-now-available/9048)
-2. cabal run example  --flags="BuildExample"
+2. cabal run motion  --flags="BuildExample"
 
 ## Example explanation
 ![example](./data/png/hover.png)
