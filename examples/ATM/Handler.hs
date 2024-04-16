@@ -41,12 +41,16 @@ checkPinFun
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin (n :: N))
 checkPinFun i = I.do
   case sing @n of
-    (SZ :: SN n1) -> checkResult @n1 Proxy i
     (SS SZ :: SN n1) -> checkResult @n1 Proxy i
     (SS (SS SZ) :: SN n1) -> checkResult @n1 Proxy i
-    _ -> LiftM $ do
-      liftIO $ putStrLn "-> test 3 times, eject card!"
-      pure (ireturn EjectCard)
+    (SS (SS (SS SZ)) :: SN n1) -> I.do
+      At userPin <- liftm $ use pin
+      if i == userPin
+        then LiftM $ pure (ireturn Correct)
+        else LiftM $ do 
+          liftIO $ putStrLn "-> test 3 times, eject card!"
+          pure (ireturn EjectCard)
+    _ -> error "np" 
 
 readyHandler :: Op ATMSt InternalState Ready Ready
 readyHandler = I.do
