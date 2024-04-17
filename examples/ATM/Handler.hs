@@ -26,7 +26,7 @@ checkResult
   :: forall n
    . (SingI n, Reify n, Less3 n)
   => Int
-  -> Operate (StateT InternalState IO) CheckPINResult ('CheckPin n)
+  -> Operate (StateT InternalState IO) CheckPINResult (CheckPin n)
 checkResult i = I.do
   At userPin <- liftm $ use pin
   if i == userPin
@@ -42,13 +42,13 @@ checkPinFun i = I.do
   case sing @n of
     SS SZ -> checkResult i
     SS (SS SZ) -> checkResult i
-    SS (SS (SS SZ)) -> I.do
+    sn@(SS (SS (SS SZ))) -> I.do
       At userPin <- liftm $ use pin
       if i == userPin
         then LiftM $ pure (ireturn Correct)
         else LiftM $ do
           liftIO $ putStrLn "-> test 3 times, eject card!"
-          pure (ireturn EjectCard)
+          pure (ireturn (EjectCard sn))
     _ -> error "np"
 
 readyHandler :: Op ATMSt InternalState Ready Ready
@@ -68,7 +68,7 @@ cardInsertedHandler = I.do
     CheckPIN i -> I.do
       res <- checkPinFun i
       case res of
-        EjectCard -> readyHandler
+        EjectCard _ -> readyHandler
         Incorrect -> cardInsertedHandler
         Correct -> sessionHandler
 

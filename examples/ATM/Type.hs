@@ -6,6 +6,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Type where
@@ -52,7 +53,7 @@ type family Less3 (n :: N) :: Constraint where
   Less3 _ = TypeError (Text "test must less 3")
 
 data CheckPINResult :: ATMSt -> Type where
-  EjectCard :: CheckPINResult Ready
+  EjectCard :: (n ~ S (S (S Z))) => SN n -> CheckPINResult Ready
   Incorrect :: (SingI n, Reify n, Less3 n) => CheckPINResult (CardInserted n)
   Correct :: CheckPINResult Session
 
