@@ -2,12 +2,16 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Type where
 
@@ -18,13 +22,40 @@ import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.IFunctor (IMonad (..))
 import qualified Data.IFunctor as I
+import Data.Int (Int32)
 import Data.Kind
 import Data.SR
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.TH (makeLenses)
+import SDL
 import TypedFsm.Core
 import TypedFsm.Driver
+
+----------------------------------
+type Point' = Point V2 Int
+
+pattern Point x y = P (V2 x y)
+{-# COMPLETE Point #-}
+
+newtype MyEvent = MyMouseLeftButtonClick (Point V2 Int32)
+  deriving (Show, Eq, Ord)
+
+data Rect = Rect
+  { _rx :: Int
+  , _ry :: Int
+  , _width :: Int
+  , _height :: Int
+  }
+  deriving (Show)
+
+data Label = Label
+  { _rect :: Rect
+  , _label :: String
+  }
+  deriving (Show)
+
+----------------------------------
 
 data N = Z | S N
   deriving (Show)
@@ -71,8 +102,29 @@ instance StateTransMsg ATMSt where
 data InternalState = InternalState
   { _pin :: Int
   , _amount :: Int
+  , _amountLabel :: Label
+  , _insCardLabel :: Label
+  , _checkPinLabel :: Label
+  , _checkPinErrorLabel :: Label
+  , _getAmountLabel :: Label
+  , _dispenseLabel :: Label
+  , _ejectLabel :: Label
   }
   deriving (Show)
+
+initInternState :: InternalState
+initInternState =
+  InternalState
+    { _pin = 1234
+    , _amount = 1000
+    , _amountLabel = Label (Rect 10 130 100 30) "null"
+    , _insCardLabel = (Label (Rect 10 230 100 30) "Insert Card")
+    , _checkPinLabel = (Label (Rect 10 230 100 30) "checkPin 1234")
+    , _checkPinErrorLabel = (Label (Rect 10 274 100 30) "checkPin 1 error")
+    , _getAmountLabel = (Label (Rect 10 230 100 30) "GetAmount")
+    , _dispenseLabel = (Label (Rect 130 230 100 30) "Dispense 100")
+    , _ejectLabel = (Label (Rect 10 330 100 30) "Eject")
+    }
 
 instance Reify Ready where
   reifyProxy _ = Ready
@@ -119,4 +171,6 @@ deriveGCompare ''SN
 
 deriveGEq ''SATMSt
 deriveGCompare ''SATMSt
+makeLenses ''Rect
+makeLenses ''Label
 makeLenses ''InternalState

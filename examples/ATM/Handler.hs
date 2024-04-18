@@ -17,7 +17,7 @@ import Data.Kind
 import Data.SR
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
-import Lens.Micro.Mtl (use, (-=))
+import Lens.Micro.Mtl (use, (-=), (.=))
 import Type
 import TypedFsm.Core
 import TypedFsm.Driver
@@ -70,7 +70,9 @@ cardInsertedHandler = I.do
       case res of
         EjectCard _ -> readyHandler
         Incorrect -> cardInsertedHandler
-        Correct -> sessionHandler
+        Correct -> I.do
+          liftm $ amountLabel . label .= ("Amount: -- ")
+          sessionHandler
 
 sessionHandler :: Op ATMSt InternalState Ready Session
 sessionHandler = I.do
@@ -79,6 +81,7 @@ sessionHandler = I.do
     GetAmount -> I.do
       liftm $ do
         am <- use amount
+        amountLabel . label .= ("Amount: " <> show am)
         liftIO $ putStrLn ("-> User Amount: " <> show am)
       sessionHandler
     Dispense i -> I.do
@@ -86,6 +89,7 @@ sessionHandler = I.do
         amount -= i -- need to check amount is enough?
         liftIO $ putStrLn ("-> Use dispense " ++ show i)
         am <- use amount
+        amountLabel . label .= ("Now Amount: " <> show am)
         liftIO $ putStrLn ("-> Now User Amount: " <> show am)
       sessionHandler
     SEject -> readyHandler
