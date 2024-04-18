@@ -40,33 +40,4 @@ ghcup install ghc 9.10.0.20240413
 ### cabal run atm  --flags="BuildExample"
 
 result:
-```shell
-start ATM
--> current ATMSt: Ready
-ins card
--> current ATMSt: CardInserted Z
-checkPin 1
--> current ATMSt: CardInserted (S Z)
-checkPin 2
--> current ATMSt: CardInserted (S (S Z))
-checkPin 3
--> test 3 times, eject card!
--> current ATMSt: Ready
-ins card
--> current ATMSt: CardInserted Z
-checkPin 1234
--> current ATMSt: Session
-getAmount
--> User Amount: 1000
--> current ATMSt: Session
-dispense 100
--> Use dispense 100
--> Now User Amount: 900
--> current ATMSt: Session
-dispense 100
--> Use dispense 100
--> Now User Amount: 800
--> current ATMSt: Session
-eject
--> current ATMSt: Ready
-```
+![atm-gui](data/png/atm-gui.png)
