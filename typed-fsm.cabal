@@ -53,7 +53,7 @@ extra-doc-files:    CHANGELOG.md
 
 flag BuildExample
   description: Build mouse moniton example
-  default: False
+  default: True
 
 common warnings
     ghc-options: -Wall
@@ -66,6 +66,7 @@ library
     exposed-modules:  Data.IFunctor
                     , TypedFsm.Core
                     , TypedFsm.Driver
+                    , TypedFsm.Signal
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -140,6 +141,37 @@ executable atm
                , EventToMsg
                , Utils
 
+
+executable signal
+  if !flag(BuildExample)
+    buildable: False
+  build-depends: base
+               , typed-fsm
+               , unordered-containers
+               , dependent-map
+               , dependent-sum
+               , dependent-sum-template
+               , containers
+               , microlens
+               , microlens-mtl
+               , microlens-th
+               , microlens-ghc
+               , mtl
+               , sdl2
+               , sdl2-ttf
+               , stm
+               , linear
+               , unordered-containers
+  main-is: Main.hs
+  default-language: Haskell2010
+  hs-source-dirs: examples/signal
+  other-modules: Obj
+               , Win
+               , Utils
+               , Handler
+
+               -- , EventToMsg
+               -- , Utils
 
 test-suite typed-fsm-test
     -- Import common warning flags.

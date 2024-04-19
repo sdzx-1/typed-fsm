@@ -41,6 +41,7 @@ runOp
   :: forall ps event state m a (input :: ps) (output :: ps)
    . ( SingI input
      , GCompare (Sing @ps)
+     , Monad m
      )
   => (Monad m)
   => State2GenMsg ps state event
