@@ -35,8 +35,12 @@ ghcup install ghc 9.10.0.20240413
 ### cabal run motion  --flags="BuildExample"
 
 ## 2. ATM FSM Example
+Original design:
 ![msg](data/png/atm.png)
 [confidence-in-types](https://github.com/CodingCellist/talks/blob/main/2024-03-06-spls-st-andrews/confidence-in-types.pdf)
+
+My design:
+![atm-new](data/png/atm-new.png)
 ### cabal run atm  --flags="BuildExample"
 
 result:
