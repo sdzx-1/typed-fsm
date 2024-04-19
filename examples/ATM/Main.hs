@@ -20,7 +20,6 @@ module Main where
 import Control.Concurrent (threadDelay)
 import Control.Monad
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.State
 import Control.Monad.State (StateT (runStateT))
 import qualified Control.Monad.State as M
 import Data.Data (Proxy (..))
