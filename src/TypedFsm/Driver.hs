@@ -38,15 +38,16 @@ type Op ps state o i = Operate (StateT state IO) (At () (o :: ps)) (i :: ps)
 type SomeOp ps state = SomeOperate ps (StateT state IO) ()
 
 runOp
-  :: forall ps event state a (input :: ps) (output :: ps)
+  :: forall ps event state m a (input :: ps) (output :: ps)
    . ( SingI input
      , Reify input
      , GCompare (Sing @ps)
      )
+  => (Monad m)
   => State2GenMsg ps state event
   -> [event]
-  -> Operate (StateT state IO) (At a output) input
-  -> (StateT state IO) (OpResult ps (StateT state IO) a)
+  -> Operate (StateT state m) (At a output) input
+  -> (StateT state m) (OpResult ps (StateT state m) a)
 runOp dmp evns = \case
   IReturn (At a) -> pure (Right a)
   LiftM m -> m Prelude.>>= runOp dmp evns
