@@ -7,7 +7,7 @@ module EventToMsg where
 import Data.Data (Proxy (..))
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum
-import Data.SR
+import Data.IFunctor (SingI)
 import Lens.Micro
 import Text.Read (readMaybe)
 import Type
@@ -15,7 +15,7 @@ import TypedFsm.Driver
 import Utils
 
 scEventHandler
-  :: (SingI n, Reify n, Less3 n)
+  :: (SingI n, Less3 n)
   => Proxy n
   -> GenMsg ATMSt InternalState MyEvent (CardInserted n)
 scEventHandler _ =

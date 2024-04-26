@@ -15,7 +15,6 @@ import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.IFunctor (At (..))
 import qualified Data.IFunctor as I
 import Data.Kind
-import Data.SR
 import GHC.Event
 import Lens.Micro.Mtl
 import Lens.Micro.TH

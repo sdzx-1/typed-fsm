@@ -29,7 +29,7 @@ data DrawEnv = DrawEnv
 
 eventToKP :: Event -> Maybe MyEvent
 eventToKP e = case eventPayload e of
-  MouseButtonEvent (MouseButtonEventData _ Pressed  _ _ _ pos) ->
+  MouseButtonEvent (MouseButtonEventData _ Pressed _ _ _ pos) ->
     Just $ MyMouseLeftButtonClick pos
   _ -> Nothing
 

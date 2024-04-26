@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE QualifiedDo #-}
@@ -15,11 +16,10 @@ import Control.Monad.State
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (At (..))
+import Data.IFunctor (At (..), Sing, SingI)
 import qualified Data.IFunctor as I
 import Data.Int (Int32)
 import Data.Kind
-import Data.SR
 import GHC.Event
 import Lens.Micro.Mtl
 import Lens.Micro.TH
@@ -50,6 +50,12 @@ data SMotion :: Motion -> Type where
   SOver :: SMotion Over
   SHover :: SMotion Hover
 
+smTom :: SMotion m -> Motion
+smTom = \case
+  SIdel -> Idle
+  SOver -> Over
+  SHover -> Hover
+
 instance StateTransMsg Motion where
   data Msg Motion from to where
     MoveIn :: Point' -> Timestamp -> Msg Motion Idle Over
@@ -75,15 +81,6 @@ data MotionState = MotionState
   , _mousePos :: Point'
   , _onHover :: Maybe (Point', [String])
   }
-
-instance Reify Idle where
-  reifyProxy _ = Idle
-
-instance Reify Over where
-  reifyProxy _ = Over
-
-instance Reify Hover where
-  reifyProxy _ = Hover
 
 type instance Sing = SMotion
 

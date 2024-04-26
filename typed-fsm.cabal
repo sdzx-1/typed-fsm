@@ -64,7 +64,6 @@ library
 
     -- Modules exported by the library.
     exposed-modules:  Data.IFunctor
-                    , Data.SR
                     , TypedFsm.Core
                     , TypedFsm.Driver
 

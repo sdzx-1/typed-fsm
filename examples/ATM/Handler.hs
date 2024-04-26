@@ -11,10 +11,9 @@ module Handler where
 
 import Control.Monad.State
 import Data.Data (Proxy (..))
-import Data.IFunctor (At (..), IMonad (..))
+import Data.IFunctor (At (..), IMonad (..), SingI, sing)
 import qualified Data.IFunctor as I
 import Data.Kind
-import Data.SR
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.Mtl (use, (-=), (.=))
@@ -24,7 +23,7 @@ import TypedFsm.Driver
 
 checkResult
   :: forall n
-   . (SingI n, Reify n, Less3 n)
+   . (SingI n, Less3 n)
   => Int
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin n)
 checkResult i = I.do
@@ -35,7 +34,7 @@ checkResult i = I.do
 
 checkPinFun
   :: forall (n :: N)
-   . (SingI n, Reify n)
+   . (SingI n)
   => Int
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin (n :: N))
 checkPinFun i = I.do
@@ -58,7 +57,7 @@ readyHandler = I.do
     InsertCard -> cardInsertedHandler
 
 cardInsertedHandler
-  :: (SingI n, Reify n)
+  :: (SingI n)
   => Op ATMSt InternalState Ready (CardInserted n)
 cardInsertedHandler = I.do
   msg <- getInput

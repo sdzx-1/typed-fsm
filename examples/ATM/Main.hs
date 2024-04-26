@@ -7,7 +7,6 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
@@ -20,14 +19,12 @@ module Main where
 import Control.Concurrent (threadDelay)
 import Control.Monad
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.State
 import Control.Monad.State (StateT (runStateT))
 import qualified Control.Monad.State as M
 import Data.Data (Proxy (..))
 import Data.IFunctor (IMonad (..))
 import qualified Data.IFunctor as I
 import Data.Kind
-import Data.SR
 import EventToMsg
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
@@ -62,7 +59,7 @@ appLoop de@(DrawEnv renderer font ccref) (SomeOperate fun) = do
   v <- runOp atmDepMap (makeMyEvent events) fun
   case v of
     Left fun1 -> do
-      let atmSt = reifySomeOperateInput fun1
+      let atmSt = satmToatm $ singSomeOperate fun1
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
 

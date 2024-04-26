@@ -5,6 +5,6 @@ allow-newer: all
 
 source-repository-package
   type: git
-  location: https://github.com/sdzx-1/lens.git
-  tag: 50021f026873dc97d28dbc2d0cb728e2e4f82d9f 
+  location: https://github.com/ekmett/lens.git
+  tag: 893b91952d09fbb6a06cd23c99127f630780784a
 

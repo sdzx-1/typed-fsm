@@ -62,7 +62,7 @@ appLoop de@(DrawEnv renderer font ccref) chan depMap (SomeOperate fun) = do
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
 
-      let motionState = reifySomeOperateInput fun1
+      let motionState = smTom $ singSomeOperate fun1
       liftIO $ drawStrings de [show motionState] (10, 30)
 
       MotionState (Rect x y w h) _ _ mOnhove <- M.get

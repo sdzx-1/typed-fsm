@@ -2,6 +2,8 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -11,8 +13,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Redundant bracket" #-}
-
 module Type where
 
 import Control.Monad.State
@@ -20,11 +20,10 @@ import Data.Data (Proxy (..))
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (IMonad (..))
+import Data.IFunctor (IMonad (..), Sing, SingI, sing)
 import qualified Data.IFunctor as I
 import Data.Int (Int32)
 import Data.Kind
-import Data.SR
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.TH (makeLenses)
@@ -64,6 +63,17 @@ data SN :: N -> Type where
   SZ :: SN Z
   SS :: SN n -> SN (S n)
 
+snTon :: SN n -> N
+snTon SZ = Z
+snTon (SS s1) = S (snTon s1)
+
+satmToatm :: SATMSt s -> ATMSt
+satmToatm = \case
+  SReady -> Ready
+  SCardInserted sn -> CardInserted (snTon sn)
+  SCheckPin sn -> CheckPin (snTon sn)
+  SSession -> Session
+
 data ATMSt
   = Ready
   | CardInserted N
@@ -85,7 +95,7 @@ type family Less3 (n :: N) :: Constraint where
 
 data CheckPINResult :: ATMSt -> Type where
   EjectCard :: (n ~ S (S (S Z))) => SN n -> CheckPINResult Ready
-  Incorrect :: (SingI n, Reify n, Less3 n) => CheckPINResult (CardInserted n)
+  Incorrect :: (SingI n, Less3 n) => CheckPINResult (CardInserted n)
   Correct :: CheckPINResult Session
 
 instance StateTransMsg ATMSt where
@@ -126,18 +136,6 @@ initInternState =
     , _ejectLabel = (Label (Rect 10 330 100 30) "Eject")
     }
 
-instance Reify Ready where
-  reifyProxy _ = Ready
-
-instance (Reify n) => Reify (CardInserted n) where
-  reifyProxy _ = CardInserted (reifyProxy (Proxy :: Proxy n))
-
-instance (Reify n) => Reify (CheckPin n) where
-  reifyProxy _ = CheckPin (reifyProxy (Proxy :: Proxy n))
-
-instance Reify Session where
-  reifyProxy _ = Session
-
 type instance Sing = SATMSt
 
 instance SingI Ready where
@@ -153,12 +151,6 @@ instance SingI Session where
   sing = SSession
 
 type instance Sing = SN
-
-instance Reify Z where
-  reifyProxy _ = Z
-
-instance (Reify n) => Reify (S n) where
-  reifyProxy _ = S (reifyProxy (Proxy :: Proxy n))
 
 instance SingI Z where
   sing = SZ
