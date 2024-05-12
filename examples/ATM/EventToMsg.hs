@@ -36,7 +36,11 @@ atmDepMap =
         :=> GenMsg
           ( \ist event -> case event of
               MyMouseLeftButtonClick (fmap fromIntegral -> p) ->
-                (if (ist ^. insCardLabel . rect) `contains` p then Just (SomeMsg InsertCard) else Nothing)
+                ( if
+                    | (ist ^. insCardLabel . rect) `contains` p -> Just (SomeMsg InsertCard)
+                    | (ist ^. exitLabel . rect) `contains` p -> Just (SomeMsg ExitATM)
+                    | otherwise -> Nothing
+                )
           )
     , SCardInserted SZ :=> scEventHandler Proxy
     , SCardInserted (SS SZ) :=> scEventHandler Proxy

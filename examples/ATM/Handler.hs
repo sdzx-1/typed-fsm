@@ -20,6 +20,7 @@ import Lens.Micro.Mtl (use, (-=), (.=))
 import Type
 import TypedFsm.Core
 import TypedFsm.Driver
+import Data.IFunctor (returnAt)
 
 checkResult
   :: forall n
@@ -50,15 +51,16 @@ checkPinFun i = I.do
           pure (ireturn (EjectCard sn))
     _ -> error "np"
 
-readyHandler :: Op ATMSt InternalState IO Ready Ready
+readyHandler :: Op ATMSt InternalState IO Exit Ready
 readyHandler = I.do
   msg <- getInput
   case msg of
     InsertCard -> cardInsertedHandler
+    ExitATM -> returnAt ()
 
 cardInsertedHandler
   :: (SingI n)
-  => Op ATMSt InternalState IO Ready (CardInserted n)
+  => Op ATMSt InternalState IO Exit (CardInserted n)
 cardInsertedHandler = I.do
   msg <- getInput
   case msg of
@@ -73,7 +75,7 @@ cardInsertedHandler = I.do
           liftm $ amountLabel . label .= ("Amount: -- ")
           sessionHandler
 
-sessionHandler :: Op ATMSt InternalState IO Ready Session
+sessionHandler :: Op ATMSt InternalState IO Exit Session
 sessionHandler = I.do
   msg <- getInput
   case msg of

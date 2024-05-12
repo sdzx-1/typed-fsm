@@ -70,6 +70,7 @@ appLoop de@(DrawEnv renderer font ccref) (SomeOperate fun) = do
       case atmSt of
         Ready -> do
           liftIO $ drawLabel de (ist ^. insCardLabel)
+          liftIO $ drawLabel de (ist ^. exitLabel)
         CardInserted n -> do
           liftIO $ drawLabel de (ist ^. checkPinLabel)
           liftIO $ drawLabel de (ist ^. checkPinErrorLabel)

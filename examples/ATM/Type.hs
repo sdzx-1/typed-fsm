@@ -79,6 +79,7 @@ data ATMSt
   | CardInserted N
   | CheckPin N
   | Session
+  | Exit
   deriving (Show)
 
 data SATMSt :: ATMSt -> Type where
@@ -86,6 +87,7 @@ data SATMSt :: ATMSt -> Type where
   SCardInserted :: SN n -> SATMSt (CardInserted n)
   SCheckPin :: SN n -> SATMSt (CheckPin n)
   SSession :: SATMSt Session
+  SExit :: SATMSt Exit
 
 type family Less3 (n :: N) :: Constraint where
   Less3 Z = ()
@@ -100,6 +102,7 @@ data CheckPINResult :: ATMSt -> Type where
 
 instance StateTransMsg ATMSt where
   data Msg ATMSt from to where
+    ExitATM :: Msg ATMSt Ready Exit
     InsertCard :: Msg ATMSt Ready (CardInserted Z)
     CIEject :: Msg ATMSt (CardInserted n) Ready
     ---------------
@@ -114,6 +117,7 @@ data InternalState = InternalState
   , _amount :: Int
   , _amountLabel :: Label
   , _insCardLabel :: Label
+  , _exitLabel :: Label
   , _checkPinLabel :: Label
   , _checkPinErrorLabel :: Label
   , _getAmountLabel :: Label
@@ -129,6 +133,7 @@ initInternState =
     , _amount = 1000
     , _amountLabel = Label (Rect 10 130 100 30) "null"
     , _insCardLabel = (Label (Rect 10 230 100 30) "Insert Card")
+    , _exitLabel = (Label (Rect 10 270 100 30) "EXIT")
     , _checkPinLabel = (Label (Rect 10 230 100 30) "checkPin 1234")
     , _checkPinErrorLabel = (Label (Rect 10 274 100 30) "checkPin 1 error")
     , _getAmountLabel = (Label (Rect 10 230 100 30) "GetAmount")
@@ -149,6 +154,9 @@ instance (SingI t) => SingI (CheckPin t) where
 
 instance SingI Session where
   sing = SSession
+
+instance SingI Exit where
+  sing = SExit
 
 type instance Sing = SN
 
