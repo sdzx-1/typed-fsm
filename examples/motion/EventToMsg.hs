@@ -14,6 +14,7 @@ mouseDepMap =
     [ SIdel
         :=> GenMsg
           ( \(MotionState rect' _ _ _) event -> case event of
+              MyQuit -> Just (SomeMsg ExitMotion)
               MyMouseMotion (fmap fromIntegral -> p) tms ->
                 if rect' `contains` p
                   then Just $ SomeMsg (MoveIn p tms)
@@ -23,6 +24,7 @@ mouseDepMap =
     , SOver
         :=> GenMsg
           ( \(MotionState rect' _ _ _) event -> case event of
+              MyQuit -> Just (SomeMsg ExitMotion)
               MyMouseMotion (fmap fromIntegral -> p) tms ->
                 if rect' `contains` p
                   then Just $ SomeMsg (InMove p tms)
@@ -32,6 +34,7 @@ mouseDepMap =
     , SHover
         :=> GenMsg
           ( \(MotionState rect' _ (Point mx my) _) event -> case event of
+              MyQuit -> Just (SomeMsg ExitMotion)
               MyMouseMotion (fmap fromIntegral -> p@(Point x y)) tms ->
                 if rect' `contains` p
                   then

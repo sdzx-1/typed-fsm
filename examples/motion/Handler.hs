@@ -12,7 +12,7 @@ import Control.Monad.State
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (At (..))
+import Data.IFunctor (At (..), returnAt)
 import qualified Data.IFunctor as I
 import Data.Kind
 import GHC.Event
@@ -35,10 +35,11 @@ myRegisterTimeout = do
     tk <- registerTimeout tm timeoutSize (atomically $ writeTChan chan ())
     pure (tm, tk)
 
-idelHandler :: Op Motion MotionState IO Idle Idle
+idelHandler :: Op Motion MotionState IO Exit Idle
 idelHandler = I.do
   msg <- getInput
   case msg of
+    ExitMotion -> returnAt ()
     MoveIn pos tms -> I.do
       At tp <- liftm $ do
         mousePos .= pos
@@ -46,10 +47,11 @@ idelHandler = I.do
         pure (tm, tk, tms)
       overHandler tp
 
-overHandler :: (TimerManager, TimeoutKey, Timestamp) -> Op Motion MotionState IO Idle Over
+overHandler :: (TimerManager, TimeoutKey, Timestamp) -> Op Motion MotionState IO Exit Over
 overHandler (tm, tk, oldtms) = I.do
   msg <- getInput
   case msg of
+    ExitMotion -> returnAt ()
     MoveOut -> I.do
       liftm $ liftIO $ unregisterTimeout tm tk
       idelHandler
@@ -68,10 +70,11 @@ overHandler (tm, tk, oldtms) = I.do
         onHover .= Just (pos, [show oldtms, show pos])
       hoverHandler
 
-hoverHandler :: Op Motion MotionState IO Idle Hover
+hoverHandler :: Op Motion MotionState IO Exit Hover
 hoverHandler = I.do
   msg <- getInput
   case msg of
+    ExitMotion -> returnAt ()
     HInMove pos tms -> I.do
       At tp <- liftm $ do
         mousePos .= pos

@@ -28,6 +28,9 @@ data DrawEnv = DrawEnv
 
 eventToKP :: Event -> Maybe MyEvent
 eventToKP e = case eventPayload e of
+  QuitEvent -> Just MyQuit
+  KBE Pressed KeycodeQ _ _ _ _ -> Just MyQuit
+  KBE Pressed KeycodeEscape _ _ _ _ -> Just MyQuit
   MouseMotionEvent (MouseMotionEventData _ _ _ pos _) ->
     Just $ MyMouseMotion pos (eventTimestamp e)
   _ -> Nothing

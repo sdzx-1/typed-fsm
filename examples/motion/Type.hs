@@ -36,6 +36,7 @@ pattern Point x y = P (V2 x y)
 data MyEvent
   = MyMouseMotion (Point V2 Int32) Timestamp
   | MyTimeout
+  | MyQuit
   deriving (Show, Eq, Ord)
 
 ----------------------------------
@@ -43,21 +44,26 @@ data Motion
   = Idle
   | Over
   | Hover
+  | Exit
   deriving (Show)
 
 data SMotion :: Motion -> Type where
   SIdel :: SMotion Idle
   SOver :: SMotion Over
   SHover :: SMotion Hover
+  SExit :: SMotion Exit
 
 smTom :: SMotion m -> Motion
 smTom = \case
   SIdel -> Idle
   SOver -> Over
   SHover -> Hover
+  SExit -> Exit
 
 instance StateTransMsg Motion where
   data Msg Motion from to where
+    ExitMotion :: Msg Motion s Exit
+    -----------------
     MoveIn :: Point' -> Timestamp -> Msg Motion Idle Over
     -----------------
     MoveOut :: Msg Motion Over Idle
@@ -92,6 +98,9 @@ instance SingI Over where
 
 instance SingI Hover where
   sing = SHover
+
+instance SingI Exit where
+  sing = SExit
 
 deriveGEq ''SMotion
 deriveGCompare ''SMotion
