@@ -33,9 +33,9 @@ singSomeOperate (SomeOperate (_ :: Operate m (At a o) i)) =
 
 type OpResult ps m a = (Either (SomeOperate ps m a) a)
 
-type Op ps state o i = Operate (StateT state IO) (At () (o :: ps)) (i :: ps)
+type Op ps state m o i = Operate (StateT state m) (At () (o :: ps)) (i :: ps)
 
-type SomeOp ps state = SomeOperate ps (StateT state IO) ()
+type SomeOp ps state m = SomeOperate ps (StateT state m) ()
 
 runOp
   :: forall ps event state m a (input :: ps) (output :: ps)

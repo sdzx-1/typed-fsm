@@ -50,7 +50,7 @@ checkPinFun i = I.do
           pure (ireturn (EjectCard sn))
     _ -> error "np"
 
-readyHandler :: Op ATMSt InternalState Ready Ready
+readyHandler :: Op ATMSt InternalState IO Ready Ready
 readyHandler = I.do
   msg <- getInput
   case msg of
@@ -58,7 +58,7 @@ readyHandler = I.do
 
 cardInsertedHandler
   :: (SingI n)
-  => Op ATMSt InternalState Ready (CardInserted n)
+  => Op ATMSt InternalState IO Ready (CardInserted n)
 cardInsertedHandler = I.do
   msg <- getInput
   case msg of
@@ -73,7 +73,7 @@ cardInsertedHandler = I.do
           liftm $ amountLabel . label .= ("Amount: -- ")
           sessionHandler
 
-sessionHandler :: Op ATMSt InternalState Ready Session
+sessionHandler :: Op ATMSt InternalState IO Ready Session
 sessionHandler = I.do
   msg <- getInput
   case msg of
