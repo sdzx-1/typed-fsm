@@ -25,8 +25,7 @@ This library requires you to update the ghc version to 9.10.1.
 
 Install ghc 9.10.1 using ghcup 
 ```shell
-ghcup config add-release-channel https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-prereleases-0.0.8.yaml
-ghcup install ghc 9.10.0.20240413
+ghcup install ghc 9.10.1
 ```
 
 ## 1. Mouse Motion Example
