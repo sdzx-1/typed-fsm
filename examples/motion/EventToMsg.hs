@@ -11,7 +11,7 @@ import Utils
 mouseDepMap :: State2GenMsg Motion MotionState MyEvent
 mouseDepMap =
   D.fromList
-    [ SIdel
+    [ SIdle
         :=> GenMsg
           ( \(MotionState rect' _ _ _) event -> case event of
               MyQuit -> Just (SomeMsg ExitMotion)

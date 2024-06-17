@@ -1,11 +1,18 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE QualifiedDo #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Type where
@@ -16,10 +23,13 @@ import Control.Monad.State
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (At (..), Sing, SingI)
+import Data.IFunctor (At (..))
 import qualified Data.IFunctor as I
 import Data.Int (Int32)
 import Data.Kind
+import Data.Singletons (Sing, SingI (..))
+import Data.Singletons.Base.TH
+import Data.Singletons.TH
 import GHC.Event
 import Lens.Micro.Mtl
 import Lens.Micro.TH
@@ -40,22 +50,21 @@ data MyEvent
   deriving (Show, Eq, Ord)
 
 ----------------------------------
-data Motion
-  = Idle
-  | Over
-  | Hover
-  | Exit
-  deriving (Show)
 
-data SMotion :: Motion -> Type where
-  SIdel :: SMotion Idle
-  SOver :: SMotion Over
-  SHover :: SMotion Hover
-  SExit :: SMotion Exit
+$( singletons
+    [d|
+      data Motion
+        = Idle
+        | Over
+        | Hover
+        | Exit
+        deriving (Show)
+      |]
+ )
 
 smTom :: SMotion m -> Motion
 smTom = \case
-  SIdel -> Idle
+  SIdle -> Idle
   SOver -> Over
   SHover -> Hover
   SExit -> Exit
@@ -87,20 +96,6 @@ data MotionState = MotionState
   , _mousePos :: Point'
   , _onHover :: Maybe (Point', [String])
   }
-
-type instance Sing = SMotion
-
-instance SingI Idle where
-  sing = SIdel
-
-instance SingI Over where
-  sing = SOver
-
-instance SingI Hover where
-  sing = SHover
-
-instance SingI Exit where
-  sing = SExit
 
 deriveGEq ''SMotion
 deriveGCompare ''SMotion
