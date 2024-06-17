@@ -11,7 +11,7 @@ module Handler where
 
 import Control.Monad.State
 import Data.Data (Proxy (..))
-import Data.IFunctor (At (..), IMonad (..), SingI, sing)
+import Data.IFunctor (At (..), IMonad (..))
 import qualified Data.IFunctor as I
 import Data.Kind
 import GHC.TypeError (TypeError)
@@ -21,6 +21,7 @@ import Type
 import TypedFsm.Core
 import TypedFsm.Driver
 import Data.IFunctor (returnAt)
+import Data.Singletons (SingI (sing))
 
 checkResult
   :: forall n

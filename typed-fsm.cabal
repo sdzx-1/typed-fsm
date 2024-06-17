@@ -53,7 +53,7 @@ extra-doc-files:    CHANGELOG.md
 
 flag BuildExample
   description: Build mouse moniton example
-  default: True
+  default: False
 
 common warnings
     ghc-options: -Wall
@@ -105,8 +105,6 @@ executable motion
                , microlens
                , microlens-mtl
                , microlens-th
-               , singletons
-               , singletons-th
                , singletons-base
   main-is: Main.hs
   default-language: Haskell2010
@@ -136,6 +134,7 @@ executable atm
                , stm
                , linear
                , unordered-containers
+               , singletons-base
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: examples/ATM

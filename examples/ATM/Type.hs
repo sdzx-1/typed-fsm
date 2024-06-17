@@ -20,7 +20,8 @@ import Data.Data (Proxy (..))
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (IMonad (..), Sing, SingI, sing)
+import Data.IFunctor (IMonad (..))
+import Data.Singletons (Sing, SingI(..))
 import qualified Data.IFunctor as I
 import Data.Int (Int32)
 import Data.Kind
