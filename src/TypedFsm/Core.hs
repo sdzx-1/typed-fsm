@@ -7,12 +7,12 @@ import Data.IFunctor (
   At (..),
   IFunctor (..),
   IMonad (..),
-  SingI,
   returnAt,
   type (~>),
  )
 
 import Data.Kind (Type)
+import Data.Singletons (SingI)
 
 class StateTransMsg ps where
   data Msg ps (st :: ps) (st' :: ps)

@@ -9,6 +9,7 @@ import Data.Dependent.Map (DMap)
 import Data.Dependent.Map qualified as D
 import Data.GADT.Compare (GCompare)
 import Data.IFunctor
+import Data.Singletons (Sing, SingI (..))
 import TypedFsm.Core
 import Unsafe.Coerce (unsafeCoerce)
 

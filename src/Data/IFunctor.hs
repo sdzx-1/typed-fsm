@@ -9,12 +9,6 @@ module Data.IFunctor where
 import Data.Data
 import Data.Kind
 
-type family Sing :: k -> Type
-
-type SingI :: forall {k}. k -> Constraint
-class SingI a where
-  sing :: Sing a
-
 infixr 0 ~>
 
 type f ~> g = forall x. f x -> g x

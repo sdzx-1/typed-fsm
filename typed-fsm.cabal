@@ -79,6 +79,7 @@ library
                     , dependent-sum
                     , mtl
                     , containers
+                    , singletons
 
     -- Directories containing source files.
     hs-source-dirs:   src
