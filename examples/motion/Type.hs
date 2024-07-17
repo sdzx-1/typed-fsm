@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE EmptyCase #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
@@ -22,6 +23,7 @@ import Control.Concurrent.STM.TChan
 import Control.Monad.State
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum (DSum (..))
+import Data.GADT.Compare (GCompare (..), GEq (..))
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.IFunctor (At (..))
 import qualified Data.IFunctor as I
@@ -30,6 +32,7 @@ import Data.Kind
 import Data.Singletons (Sing, SingI (..))
 import Data.Singletons.Base.TH
 import Data.Singletons.TH
+import Data.Type.Equality (TestEquality (testEquality))
 import GHC.Event
 import Lens.Micro.Mtl
 import Lens.Micro.TH
@@ -58,16 +61,18 @@ $( singletons
         | Over
         | Hover
         | Exit
-        deriving (Show)
+        deriving (Show, Eq, Ord)
       |]
  )
 
+instance GEq SMotion where
+  geq = testEquality
+
+instance GCompare SMotion where
+  gcompare = sOrdToGCompare
+
 smTom :: SMotion m -> Motion
-smTom = \case
-  SIdle -> Idle
-  SOver -> Over
-  SHover -> Hover
-  SExit -> Exit
+smTom = fromSing
 
 instance StateTransMsg Motion where
   data Msg Motion from to where
@@ -97,6 +102,4 @@ data MotionState = MotionState
   , _onHover :: Maybe (Point', [String])
   }
 
-deriveGEq ''SMotion
-deriveGCompare ''SMotion
 makeLenses ''MotionState

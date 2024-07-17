@@ -80,6 +80,7 @@ library
                     , mtl
                     , containers
                     , singletons
+                    , singletons-base
 
     -- Directories containing source files.
     hs-source-dirs:   src

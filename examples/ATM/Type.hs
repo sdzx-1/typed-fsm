@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE EmptyCase #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
@@ -18,16 +19,17 @@
 
 module Type where
 
-import Data.GADT.Compare (GCompare (..), GEq (..), GOrdering (..))
+import Data.GADT.Compare (GCompare (..), GEq (..))
 import Data.Int (Int32)
-import Data.Kind
+import Data.Kind (Constraint, Type)
 import Data.Singletons.Base.TH
+import Data.Type.Equality (TestEquality (testEquality))
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.TH (makeLenses)
 import SDL
-import TypedFsm.Core
-import Unsafe.Coerce (unsafeCoerce)
+import TypedFsm.Core (StateTransMsg (..))
+import TypedFsm.Driver (sOrdToGCompare)
 
 ----------------------------------
 type Point' = Point V2 Int
@@ -58,7 +60,7 @@ data Label = Label
 $( singletons
     [d|
       data N = Z | S N
-        deriving (Show)
+        deriving (Show, Eq, Ord)
 
       data ATMSt
         = Ready
@@ -66,71 +68,24 @@ $( singletons
         | CheckPin N
         | Session
         | Exit
-        deriving (Show)
+        deriving (Show, Eq, Ord)
       |]
  )
 
-snTon :: SN n -> N
-snTon SZ = Z
-snTon (SS s1) = S (snTon s1)
-
 satmToatm :: SATMSt s -> ATMSt
-satmToatm = \case
-  SReady -> Ready
-  SCardInserted sn -> CardInserted (snTon sn)
-  SCheckPin sn -> CheckPin (snTon sn)
-  SSession -> Session
-  SExit -> Exit
+satmToatm = fromSing
 
--- deriveGEq ''SN
 instance GEq SN where
-  geq SZ SZ = Just Refl
-  geq (SS a) (SS b) = do
-    v <- geq a b
-    pure $ unsafeCoerce v
-  geq _ _ = Nothing
+  geq = testEquality
 
--- deriveGCompare ''SN
-instance GCompare SN where
-  gcompare SZ SZ = GEQ
-  gcompare (SS _) SZ = GGT
-  gcompare SZ (SS _) = GLT
-  gcompare (SS a) (SS b) = unsafeCoerce $ gcompare a b
-
--- deriveGEq ''SATMSt
 instance GEq SATMSt where
-  geq SReady SReady = Just Refl
-  geq (SCardInserted a) (SCardInserted b) = do
-    v <- geq a b
-    pure $ unsafeCoerce v
-  geq (SCheckPin a) (SCheckPin b) = do
-    v <- geq a b
-    pure $ unsafeCoerce v
-  geq SSession SSession = Just Refl
-  geq SExit SExit = Just Refl
-  geq _ _ = Nothing
+  geq = testEquality
 
--- deriveGCompare ''SATMSt
+instance GCompare SN where
+  gcompare = sOrdToGCompare
+
 instance GCompare SATMSt where
-  gcompare SReady SReady = GEQ
-  gcompare SReady _ = GLT
-  gcompare (SCardInserted _) SReady = GGT
-  gcompare (SCardInserted a) (SCardInserted b) = unsafeCoerce $ gcompare a b
-  gcompare (SCardInserted _) _ = GLT
-  gcompare (SCheckPin _) SReady = GGT
-  gcompare (SCheckPin _) (SCardInserted _) = GGT
-  gcompare (SCheckPin a) (SCheckPin b) = unsafeCoerce $ gcompare a b
-  gcompare (SCheckPin _) _ = GLT
-  gcompare SSession SReady = GGT
-  gcompare SSession (SCardInserted _) = GGT
-  gcompare SSession (SCheckPin _) = GGT
-  gcompare SSession SSession = GEQ
-  gcompare SSession _ = GLT
-  gcompare SExit SReady = GGT
-  gcompare SExit (SCardInserted _) = GGT
-  gcompare SExit (SCheckPin _) = GGT
-  gcompare SExit SSession = GGT
-  gcompare SExit SExit = GEQ
+  gcompare = sOrdToGCompare
 
 type family Less3 (n :: N) :: Constraint where
   Less3 Z = ()
@@ -184,6 +139,6 @@ initInternState =
     , _ejectLabel = (Label (Rect 10 330 100 30) "Eject")
     }
 
-makeLenses ''Rect
-makeLenses ''Label
-makeLenses ''InternalState
+Lens.Micro.TH.makeLenses ''Rect
+Lens.Micro.TH.makeLenses ''Label
+Lens.Micro.TH.makeLenses ''InternalState
