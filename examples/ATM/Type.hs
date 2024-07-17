@@ -2,39 +2,37 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
-{-# HLINT ignore "Redundant bracket" #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# OPTIONS_GHC -Wall #-}
 
 module Type where
 
-import Control.Monad.State
-import Data.Data (Proxy (..))
-import qualified Data.Dependent.Map as D
-import Data.Dependent.Sum (DSum (..))
-import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (IMonad (..))
-import Data.Singletons (Sing, SingI(..))
-import qualified Data.IFunctor as I
+import Data.GADT.Compare (GCompare (..), GEq (..), GOrdering (..))
 import Data.Int (Int32)
 import Data.Kind
+import Data.Singletons.Base.TH
 import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.TH (makeLenses)
 import SDL
 import TypedFsm.Core
-import TypedFsm.Driver
+import Unsafe.Coerce (unsafeCoerce)
 
 ----------------------------------
 type Point' = Point V2 Int
 
+pattern Point :: a -> a -> Point V2 a
 pattern Point x y = P (V2 x y)
 {-# COMPLETE Point #-}
 
@@ -57,12 +55,20 @@ data Label = Label
 
 ----------------------------------
 
-data N = Z | S N
-  deriving (Show)
+$( singletons
+    [d|
+      data N = Z | S N
+        deriving (Show)
 
-data SN :: N -> Type where
-  SZ :: SN Z
-  SS :: SN n -> SN (S n)
+      data ATMSt
+        = Ready
+        | CardInserted N
+        | CheckPin N
+        | Session
+        | Exit
+        deriving (Show)
+      |]
+ )
 
 snTon :: SN n -> N
 snTon SZ = Z
@@ -74,21 +80,57 @@ satmToatm = \case
   SCardInserted sn -> CardInserted (snTon sn)
   SCheckPin sn -> CheckPin (snTon sn)
   SSession -> Session
+  SExit -> Exit
 
-data ATMSt
-  = Ready
-  | CardInserted N
-  | CheckPin N
-  | Session
-  | Exit
-  deriving (Show)
+-- deriveGEq ''SN
+instance GEq SN where
+  geq SZ SZ = Just Refl
+  geq (SS a) (SS b) = do
+    v <- geq a b
+    pure $ unsafeCoerce v
+  geq _ _ = Nothing
 
-data SATMSt :: ATMSt -> Type where
-  SReady :: SATMSt Ready
-  SCardInserted :: SN n -> SATMSt (CardInserted n)
-  SCheckPin :: SN n -> SATMSt (CheckPin n)
-  SSession :: SATMSt Session
-  SExit :: SATMSt Exit
+-- deriveGCompare ''SN
+instance GCompare SN where
+  gcompare SZ SZ = GEQ
+  gcompare (SS _) SZ = GGT
+  gcompare SZ (SS _) = GLT
+  gcompare (SS a) (SS b) = unsafeCoerce $ gcompare a b
+
+-- deriveGEq ''SATMSt
+instance GEq SATMSt where
+  geq SReady SReady = Just Refl
+  geq (SCardInserted a) (SCardInserted b) = do
+    v <- geq a b
+    pure $ unsafeCoerce v
+  geq (SCheckPin a) (SCheckPin b) = do
+    v <- geq a b
+    pure $ unsafeCoerce v
+  geq SSession SSession = Just Refl
+  geq SExit SExit = Just Refl
+  geq _ _ = Nothing
+
+-- deriveGCompare ''SATMSt
+instance GCompare SATMSt where
+  gcompare SReady SReady = GEQ
+  gcompare SReady _ = GLT
+  gcompare (SCardInserted _) SReady = GGT
+  gcompare (SCardInserted a) (SCardInserted b) = unsafeCoerce $ gcompare a b
+  gcompare (SCardInserted _) _ = GLT
+  gcompare (SCheckPin _) SReady = GGT
+  gcompare (SCheckPin _) (SCardInserted _) = GGT
+  gcompare (SCheckPin a) (SCheckPin b) = unsafeCoerce $ gcompare a b
+  gcompare (SCheckPin _) _ = GLT
+  gcompare SSession SReady = GGT
+  gcompare SSession (SCardInserted _) = GGT
+  gcompare SSession (SCheckPin _) = GGT
+  gcompare SSession SSession = GEQ
+  gcompare SSession _ = GLT
+  gcompare SExit SReady = GGT
+  gcompare SExit (SCardInserted _) = GGT
+  gcompare SExit (SCheckPin _) = GGT
+  gcompare SExit SSession = GGT
+  gcompare SExit SExit = GEQ
 
 type family Less3 (n :: N) :: Constraint where
   Less3 Z = ()
@@ -142,36 +184,6 @@ initInternState =
     , _ejectLabel = (Label (Rect 10 330 100 30) "Eject")
     }
 
-type instance Sing = SATMSt
-
-instance SingI Ready where
-  sing = SReady
-
-instance (SingI t) => SingI (CardInserted t) where
-  sing = SCardInserted sing
-
-instance (SingI t) => SingI (CheckPin t) where
-  sing = SCheckPin sing
-
-instance SingI Session where
-  sing = SSession
-
-instance SingI Exit where
-  sing = SExit
-
-type instance Sing = SN
-
-instance SingI Z where
-  sing = SZ
-
-instance (SingI n) => SingI (S n) where
-  sing = SS sing
-
-deriveGEq ''SN
-deriveGCompare ''SN
-
-deriveGEq ''SATMSt
-deriveGCompare ''SATMSt
 makeLenses ''Rect
 makeLenses ''Label
 makeLenses ''InternalState
