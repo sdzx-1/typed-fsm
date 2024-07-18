@@ -3,4 +3,4 @@
 
 
 # Run example
-cabal run motion
+cabal run turnstile
