@@ -7,11 +7,9 @@
 module Utils where
 
 import Control.Monad
-import Data.Foldable (foldl')
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as H
 import Data.IORef
-import Data.Int (Int32)
 import Linear
 import SDL
 import SDL.Font (Font)
@@ -89,5 +87,5 @@ drawLabel de@(DrawEnv{_renderer}) (Label (Rect x y w h) st) = do
   drawString de st (x, y)
 
 contains :: Rect -> Point' -> Bool
-contains (Rect rx ry w h) (Point x y) =
-  (rx <= x && x <= rx + w) && (ry <= y && y <= ry + h)
+contains (Rect rx1 ry1 w h) (Point x y) =
+  (rx1 <= x && x <= rx1 + w) && (ry1 <= y && y <= ry1 + h)

@@ -53,7 +53,7 @@ extra-doc-files:    CHANGELOG.md
 
 flag BuildExample
   description: Build mouse moniton example
-  default: False
+  default: True
 
 common warnings
     ghc-options: -Wall
@@ -79,7 +79,6 @@ library
                     , dependent-sum
                     , mtl
                     , containers
-                    , singletons
                     , singletons-base
 
     -- Directories containing source files.
@@ -101,7 +100,6 @@ executable motion
                , unordered-containers
                , dependent-map
                , dependent-sum
-               , dependent-sum-template
                , containers
                , microlens
                , microlens-mtl
@@ -114,7 +112,7 @@ executable motion
                , Handler
                , Type
                , EventToMsg
-  ghc-options: -threaded
+  ghc-options: -threaded -Wall
 
 executable atm
   if !flag(BuildExample)
@@ -143,6 +141,7 @@ executable atm
                , Handler
                , EventToMsg
                , Utils
+  ghc-options: -Wall
 
 
 test-suite typed-fsm-test

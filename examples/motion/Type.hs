@@ -18,41 +18,15 @@
 
 module Type where
 
-import Control.Concurrent.STM (atomically)
 import Control.Concurrent.STM.TChan
-import Control.Monad.State
-import qualified Data.Dependent.Map as D
-import Data.Dependent.Sum (DSum (..))
 import Data.GADT.Compare (GCompare (..), GEq (..))
-import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
-import Data.IFunctor (At (..))
-import qualified Data.IFunctor as I
 import Data.Int (Int32)
-import Data.Kind
-import Data.Singletons (Sing, SingI (..))
 import Data.Singletons.Base.TH
-import Data.Singletons.TH
 import Data.Type.Equality (TestEquality (testEquality))
-import GHC.Event
-import Lens.Micro.Mtl
 import Lens.Micro.TH
 import SDL
 import TypedFsm.Core
 import TypedFsm.Driver
-
-----------------------------------
-type Point' = Point V2 Int
-
-pattern Point x y = P (V2 x y)
-{-# COMPLETE Point #-}
-
-data MyEvent
-  = MyMouseMotion (Point V2 Int32) Timestamp
-  | MyTimeout
-  | MyQuit
-  deriving (Show, Eq, Ord)
-
-----------------------------------
 
 $( singletons
     [d|
@@ -73,6 +47,13 @@ instance GCompare SMotion where
 
 smTom :: SMotion m -> Motion
 smTom = fromSing
+
+----------------------------------
+type Point' = Point V2 Int
+
+pattern Point :: a -> a -> Point V2 a
+pattern Point x y = P (V2 x y)
+{-# COMPLETE Point #-}
 
 instance StateTransMsg Motion where
   data Msg Motion from to where
@@ -101,5 +82,13 @@ data MotionState = MotionState
   , _mousePos :: Point'
   , _onHover :: Maybe (Point', [String])
   }
+
+data MyEvent
+  = MyMouseMotion (Point V2 Int32) Timestamp
+  | MyTimeout
+  | MyQuit
+  deriving (Show, Eq, Ord)
+
+----------------------------------
 
 makeLenses ''MotionState

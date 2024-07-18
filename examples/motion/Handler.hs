@@ -3,26 +3,21 @@
 {-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# OPTIONS_GHC -Wall #-}
 
 module Handler where
 
 import Control.Concurrent.STM (atomically)
 import Control.Concurrent.STM.TChan
 import Control.Monad.State
-import qualified Data.Dependent.Map as D
-import Data.Dependent.Sum (DSum (..))
-import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.IFunctor (At (..), returnAt)
 import qualified Data.IFunctor as I
-import Data.Kind
 import GHC.Event
 import Lens.Micro.Mtl
-import Lens.Micro.TH
 import SDL
 import Type
 import TypedFsm.Core
 import TypedFsm.Driver
-import Utils
 
 timeoutSize :: Int
 timeoutSize = 400_000

@@ -6,11 +6,9 @@
 module Utils where
 
 import Control.Monad
-import Data.Foldable (foldl')
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as H
 import Data.IORef
-import Data.Int (Int32)
 import Linear
 import SDL
 import SDL.Font (Font)

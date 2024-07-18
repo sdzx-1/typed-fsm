@@ -7,12 +7,11 @@ module EventToMsg where
 import Data.Data (Proxy (..))
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum
+import Data.Singletons (SingI)
 import Lens.Micro
-import Text.Read (readMaybe)
 import Type
 import TypedFsm.Driver
 import Utils
-import Data.Singletons (SingI)
 
 scEventHandler
   :: (SingI n, Less3 n)

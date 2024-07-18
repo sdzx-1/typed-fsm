@@ -53,7 +53,7 @@ appLoop
   -> State2GenMsg Motion MotionState MyEvent
   -> SomeOp Motion MotionState IO
   -> StateT MotionState IO ()
-appLoop de@(DrawEnv renderer font ccref) chan depMap (SomeOperate fun) = do
+appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
   events <- pollEvents
   ma <- liftIO (atomically $ tryReadTChan chan)
   v <- runOp depMap (makeMyEvent ma events) fun
@@ -62,7 +62,7 @@ appLoop de@(DrawEnv renderer font ccref) chan depMap (SomeOperate fun) = do
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
 
-      let motionState = smTom $ singSomeOperate fun1
+      let motionState = getSomeOperateSt fun1
       liftIO $ drawStrings de [show motionState] (10, 30)
 
       MotionState (Rect x y w h) _ _ mOnhove <- M.get
@@ -74,7 +74,7 @@ appLoop de@(DrawEnv renderer font ccref) chan depMap (SomeOperate fun) = do
           Nothing -> pure ()
           Just (Point x' y', st) -> do
             rendererDrawColor renderer $= V4 100 155 144 255
-            fillRect renderer $ Just (creatRect x' y' 300 (-100))
+            fillRect renderer $ Just (creatRect x' y' (300 :: Int) (-100 :: Int))
             drawStrings de st (fromIntegral x', fromIntegral y' - 60)
 
       present renderer

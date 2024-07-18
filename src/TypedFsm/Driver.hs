@@ -10,7 +10,7 @@ import Data.Dependent.Map qualified as D
 import Data.GADT.Compare (GCompare, GOrdering (..))
 import Data.IFunctor (At (..))
 import Data.Ord.Singletons (SOrd (sCompare), SOrdering (..))
-import Data.Singletons (Sing, SingI (..))
+import Data.Singletons (Sing, SingI (..), SingKind (..))
 import TypedFsm.Core (Operate (..), StateTransMsg (Msg))
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -38,9 +38,8 @@ data SomeOperate ts m a
     (SingI i) =>
     SomeOperate (Operate m (At a o) i)
 
-singSomeOperate :: SomeOperate ts m a -> Sing (r :: ts)
-singSomeOperate (SomeOperate (_ :: Operate m (At a o) i)) =
-  unsafeCoerce (sing @i)
+getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
+getSomeOperateSt (SomeOperate (_ :: Operate m (At a o) i)) = fromSing $ sing @i
 
 type OpResult ps m a = (Either (SomeOperate ps m a) a)
 

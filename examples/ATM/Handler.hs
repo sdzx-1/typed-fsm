@@ -10,18 +10,13 @@
 module Handler where
 
 import Control.Monad.State
-import Data.Data (Proxy (..))
-import Data.IFunctor (At (..), IMonad (..))
+import Data.IFunctor (At (..), IMonad (..), returnAt)
 import qualified Data.IFunctor as I
-import Data.Kind
-import GHC.TypeError (TypeError)
-import GHC.TypeLits (ErrorMessage (..))
+import Data.Singletons (SingI (sing))
 import Lens.Micro.Mtl (use, (-=), (.=))
 import Type
 import TypedFsm.Core
 import TypedFsm.Driver
-import Data.IFunctor (returnAt)
-import Data.Singletons (SingI (sing))
 
 checkResult
   :: forall n

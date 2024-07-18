@@ -31,32 +31,6 @@ import SDL
 import TypedFsm.Core (StateTransMsg (..))
 import TypedFsm.Driver (sOrdToGCompare)
 
-----------------------------------
-type Point' = Point V2 Int
-
-pattern Point :: a -> a -> Point V2 a
-pattern Point x y = P (V2 x y)
-{-# COMPLETE Point #-}
-
-newtype MyEvent = MyMouseLeftButtonClick (Point V2 Int32)
-  deriving (Show, Eq, Ord)
-
-data Rect = Rect
-  { _rx :: Int
-  , _ry :: Int
-  , _width :: Int
-  , _height :: Int
-  }
-  deriving (Show)
-
-data Label = Label
-  { _rect :: Rect
-  , _label :: String
-  }
-  deriving (Show)
-
-----------------------------------
-
 $( singletons
     [d|
       data N = Z | S N
@@ -109,6 +83,32 @@ instance StateTransMsg ATMSt where
     GetAmount :: Msg ATMSt Session Session
     Dispense :: Int -> Msg ATMSt Session Session
     SEject :: Msg ATMSt Session Ready
+
+----------------------------------
+type Point' = Point V2 Int
+
+pattern Point :: a -> a -> Point V2 a
+pattern Point x y = P (V2 x y)
+{-# COMPLETE Point #-}
+
+newtype MyEvent = MyMouseLeftButtonClick (Point V2 Int32)
+  deriving (Show, Eq, Ord)
+
+data Rect = Rect
+  { _rx :: Int
+  , _ry :: Int
+  , _width :: Int
+  , _height :: Int
+  }
+  deriving (Show)
+
+data Label = Label
+  { _rect :: Rect
+  , _label :: String
+  }
+  deriving (Show)
+
+----------------------------------
 
 data InternalState = InternalState
   { _pin :: Int
