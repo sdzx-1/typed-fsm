@@ -23,21 +23,6 @@ Prior to ghc 9.10.1, this extension had [serious issues](https://gitlab.haskell.
 But this [MR](https://gitlab.haskell.org/ghc/ghc/-/merge_requests/10140) fixes these problems! !
 
 The latest ghc 9.10.1 contains this MR. So this library requires you to update the ghc version to 9.10.1.
--}
-module TypedFsm (
-  -- * Defining and implementing FSM
-  -- $defining
-  module TypedFsm.Core,
-
-  -- * Running FSM
-  -- $running
-  module TypedFsm.Driver,
-) where
-
-import TypedFsm.Core
-import TypedFsm.Driver
-
-{- $defining
 
 Using typed-fsm will go through the following five steps:
 
@@ -46,4 +31,16 @@ Using typed-fsm will go through the following five steps:
 3. Build status processing function
 4. Construct functions from events to messages in different states
 5. Running status processing function
+
+
 -}
+module TypedFsm (
+  -- * Defining and implementing FSM
+  module TypedFsm.Core,
+
+  -- * Running FSM
+  module TypedFsm.Driver,
+) where
+
+import TypedFsm.Core
+import TypedFsm.Driver
