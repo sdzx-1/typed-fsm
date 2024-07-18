@@ -12,3 +12,5 @@ result:
 
 # Run example
 cabal run atm
+
+Note: defaulte pin is 1234

@@ -15,6 +15,7 @@
 module Main where
 
 import Control.Concurrent (threadDelay)
+import Control.Monad (forM_)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State (StateT (runStateT))
 import qualified Control.Monad.State as M
@@ -63,9 +64,10 @@ appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
           liftIO $ drawLabel de (ist ^. insCardLabel)
           liftIO $ drawLabel de (ist ^. exitLabel)
         CardInserted _n -> do
-          liftIO $ drawLabel de (ist ^. checkPinLabel)
-          liftIO $ drawLabel de (ist ^. checkPinErrorLabel)
+          let ls = ist ^. tmpPin
+          liftIO $ drawLabel de (Label (Rect 10 90 300 30) (show $ reverse ls))
           liftIO $ drawLabel de (ist ^. ejectLabel)
+          liftIO $ forM_ (ist ^. nlabels) $ drawNLabel de
         Session -> do
           liftIO $ drawLabel de (ist ^. amountLabel)
           liftIO $ drawLabel de (ist ^. getAmountLabel)

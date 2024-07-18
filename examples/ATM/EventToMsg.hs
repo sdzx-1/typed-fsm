@@ -23,9 +23,15 @@ scEventHandler _ =
         MyMouseLeftButtonClick (fmap fromIntegral -> p) ->
           if
             | (ist ^. ejectLabel . rect) `contains` p -> Just (SomeMsg CIEject)
-            | (ist ^. checkPinLabel . rect) `contains` p -> Just (SomeMsg (CheckPIN 1234))
-            | (ist ^. checkPinErrorLabel . rect) `contains` p -> Just (SomeMsg (CheckPIN 1))
-            | otherwise -> Nothing
+            | otherwise ->
+                let nls = ist ^. nlabels
+                    rs = filter (\(NLabel r _) -> r `contains` p) nls
+                 in case rs of
+                      [] -> Nothing
+                      NLabel _r i : _ -> case i of
+                        10 -> Just $ SomeMsg DelectNum
+                        11 -> Just $ SomeMsg (CheckPIN $ reverse (ist ^. tmpPin))
+                        _ -> Just $ SomeMsg $ AddNum i
     )
 
 atmDepMap :: State2GenMsg ATMSt InternalState MyEvent

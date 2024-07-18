@@ -13,7 +13,7 @@ import Control.Monad.State
 import Data.IFunctor (At (..), IMonad (..), returnAt)
 import qualified Data.IFunctor as I
 import Data.Singletons (SingI (sing))
-import Lens.Micro.Mtl (use, (-=), (.=))
+import Lens.Micro.Mtl (use, (%=), (-=), (.=))
 import Type
 import TypedFsm.Core
 import TypedFsm.Driver
@@ -21,7 +21,7 @@ import TypedFsm.Driver
 checkResult
   :: forall n
    . (SingI n, Less3 n)
-  => Int
+  => [Int]
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin n)
 checkResult i = I.do
   At userPin <- liftm $ use pin
@@ -32,7 +32,7 @@ checkResult i = I.do
 checkPinFun
   :: forall (n :: N)
    . (SingI n)
-  => Int
+  => [Int]
   -> Operate (StateT InternalState IO) CheckPINResult (CheckPin (n :: N))
 checkPinFun i = I.do
   case sing @n of
@@ -51,8 +51,14 @@ readyHandler :: Op ATMSt InternalState IO () Exit Ready
 readyHandler = I.do
   msg <- getInput
   case msg of
-    InsertCard -> cardInsertedHandler
+    InsertCard -> I.do
+      liftm $ tmpPin .= []
+      cardInsertedHandler
     ExitATM -> returnAt ()
+
+removeOne :: [a] -> [a]
+removeOne [] = []
+removeOne (_ : xs) = xs
 
 cardInsertedHandler
   :: (SingI n)
@@ -60,8 +66,13 @@ cardInsertedHandler
 cardInsertedHandler = I.do
   msg <- getInput
   case msg of
-    CIEject -> I.do
-      readyHandler
+    CIEject -> readyHandler
+    AddNum i -> I.do
+      liftm $ tmpPin %= (i :)
+      cardInsertedHandler
+    DelectNum -> I.do
+      liftm $ tmpPin %= removeOne
+      cardInsertedHandler
     CheckPIN i -> I.do
       res <- checkPinFun i
       case res of

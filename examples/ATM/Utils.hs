@@ -86,6 +86,16 @@ drawLabel de@(DrawEnv{_renderer}) (Label (Rect x y w h) st) = do
   drawRect _renderer (Just (Rectangle (P (V2 (fromIntegral x) (fromIntegral y))) (V2 (fromIntegral w) (fromIntegral h))))
   drawString de st (x, y)
 
+drawNLabel :: DrawEnv -> NLabel -> IO ()
+drawNLabel de@(DrawEnv{_renderer}) (NLabel (Rect x y w h) st) = do
+  drawRect _renderer (Just (Rectangle (P (V2 (fromIntegral x) (fromIntegral y))) (V2 (fromIntegral w) (fromIntegral h))))
+  drawString de (showInt st) (x, y)
+
+showInt :: Int -> String
+showInt 10 = "<-"
+showInt 11 = "OK"
+showInt i = show i
+
 contains :: Rect -> Point' -> Bool
 contains (Rect rx1 ry1 w h) (Point x y) =
   (rx1 <= x && x <= rx1 + w) && (ry1 <= y && y <= ry1 + h)

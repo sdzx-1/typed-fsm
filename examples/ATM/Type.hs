@@ -78,7 +78,9 @@ instance StateTransMsg ATMSt where
     InsertCard :: Msg ATMSt Ready (CardInserted Z)
     CIEject :: Msg ATMSt (CardInserted n) Ready
     ---------------
-    CheckPIN :: Int -> Msg ATMSt (CardInserted n) (CheckPin (S n))
+    AddNum :: Int -> Msg ATMSt (CardInserted n) (CardInserted n)
+    DelectNum :: Msg ATMSt (CardInserted n) (CardInserted n)
+    CheckPIN :: [Int] -> Msg ATMSt (CardInserted n) (CheckPin (S n))
     ---------------
     GetAmount :: Msg ATMSt Session Session
     Dispense :: Int -> Msg ATMSt Session Session
@@ -108,16 +110,22 @@ data Label = Label
   }
   deriving (Show)
 
+data NLabel = NLabel
+  { _nrect :: Rect
+  , _nlabel :: Int
+  }
+  deriving (Show)
+
 ----------------------------------
 
 data InternalState = InternalState
-  { _pin :: Int
+  { _pin :: [Int]
   , _amount :: Int
   , _amountLabel :: Label
   , _insCardLabel :: Label
   , _exitLabel :: Label
-  , _checkPinLabel :: Label
-  , _checkPinErrorLabel :: Label
+  , _tmpPin :: [Int]
+  , _nlabels :: [NLabel]
   , _getAmountLabel :: Label
   , _dispenseLabel :: Label
   , _ejectLabel :: Label
@@ -127,13 +135,13 @@ data InternalState = InternalState
 initInternState :: InternalState
 initInternState =
   InternalState
-    { _pin = 1234
+    { _pin = [1, 2, 3, 4]
     , _amount = 1000
     , _amountLabel = Label (Rect 10 130 100 30) "null"
     , _insCardLabel = (Label (Rect 10 230 100 30) "Insert Card")
-    , _exitLabel = (Label (Rect 10 270 100 30) "EXIT")
-    , _checkPinLabel = (Label (Rect 10 230 100 30) "checkPin 1234")
-    , _checkPinErrorLabel = (Label (Rect 10 274 100 30) "checkPin 1 error")
+    , _exitLabel = (Label (Rect 10 330 100 30) "EXIT")
+    , _tmpPin = []
+    , _nlabels = concat [[NLabel (Rect (10 + l * 42) (140 + d * 42) 40 40) (d * 3 + l) | l <- [0 .. 2]] | d <- [0 .. 3]]
     , _getAmountLabel = (Label (Rect 10 230 100 30) "GetAmount")
     , _dispenseLabel = (Label (Rect 130 230 100 30) "Dispense 100")
     , _ejectLabel = (Label (Rect 10 330 100 30) "Eject")
