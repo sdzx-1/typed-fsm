@@ -26,8 +26,18 @@ version:            0.1.0.0
 synopsis: A framework for strongly typed FSM
 
 -- A longer description of the package.
--- description:
+description:
+  FSM stands for [Finite State Machine](https://en.wikipedia.org/wiki/Finite-state_machine).
+  The typed-fsm is used to define and execute FSM.
 
+  Advantages of type-fsm:
+
+  * Focus on the right message.
+  * Top-to-bottom design for easy refactoring.
+  * Conducive to building complex state machine systems:
+  ** Type guarantees will not produce incorrect function calls when written.
+  ** With the help of the type system, we can define many state processing functions and then call each other recursively with confidence.
+  * There is a sanity check. If you miss some items for pattern matching, the compiler will issue a warning, and there will also be a warning for invalid items.
 -- The license under which the package is released.
 license:            MIT
 
@@ -39,7 +49,6 @@ author:             sdzx-1
 
 -- An email address to which users can send suggestions, bug reports, and patches.
 maintainer:         shangdizhixia1993@163.com
-
 -- A copyright notice.
 -- copyright:
 category:           Control
@@ -75,11 +84,11 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends: base >=4.20.0.0
-                 , dependent-map >= 0.4.0.0
-                 , dependent-sum >= 0.7.2.0
-                 , mtl >= 2.3.1
-                 , singletons-base >= 3.4
+    build-depends: base >=4.20.0.0 && < 5
+                 , dependent-map ^>= 0.4.0.0
+                 , dependent-sum ^>= 0.7.2.0
+                 , mtl ^>= 2.3.1
+                 , singletons-base ^>= 3.4
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -92,19 +101,19 @@ executable motion
     buildable: False
   build-depends: base >=4.20.0.0
                , typed-fsm
-               , sdl2
-               , sdl2-ttf
-               , mtl
-               , stm
-               , linear
-               , unordered-containers
-               , dependent-map
-               , dependent-sum
-               , containers
-               , microlens
-               , microlens-mtl
-               , microlens-th
-               , singletons-base
+               , sdl2 ^>= 2.5.5.0
+               , sdl2-ttf ^>= 2.1.3
+               , mtl >= 2.3.1
+               , stm ^>= 2.5.3.1
+               , linear ^>= 1.22
+               , unordered-containers ^>= 0.2.20
+               , dependent-map >= 0.4.0.0
+               , dependent-sum >= 0.7.2.0
+               , containers ^>= 0.7 
+               , microlens ^>= 0.4.0.0
+               , microlens-mtl ^>= 0.2.0.3
+               , microlens-th ^>= 0.4.3.15
+               , singletons-base >= 3.4
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: examples/motion
@@ -119,20 +128,21 @@ executable atm
     buildable: False
   build-depends: base >=4.20.0.0
                , typed-fsm
+               , unordered-containers ^>= 0.2.20
+               , dependent-map >= 0.4.0.0
+               , dependent-sum >= 0.7.2.0
+               , containers ^>= 0.7
+               , microlens ^>= 0.4.0.0
+               , microlens-mtl ^>= 0.2.0.3
+               , microlens-th ^>= 0.4.3.15
+               , mtl >= 2.3.1
+               , sdl2 ^>= 2.5.5.0
+               , sdl2-ttf ^>= 2.1.3
+               , mtl >= 2.3.1
+               , stm ^>= 2.5.3.1
+               , linear ^>= 1.22
                , unordered-containers
-               , dependent-map
-               , dependent-sum
-               , containers
-               , microlens
-               , microlens-mtl
-               , microlens-th
-               , mtl
-               , sdl2 >= 2.5.5.0
-               , sdl2-ttf
-               , stm
-               , linear
-               , unordered-containers
-               , singletons-base
+               , singletons-base >= 3.4
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: examples/ATM
@@ -147,11 +157,15 @@ executable turnstile
     buildable: False
   build-depends: base >=4.20.0.0
                , typed-fsm
-               , dependent-map
-               , dependent-sum
-               , mtl
-               , singletons-base
+               , dependent-map >= 0.4.0.0
+               , dependent-sum >= 0.7.2.0
+               , mtl >= 2.3.1
+               , singletons-base >= 3.4
   main-is: Main.hs
   default-language: Haskell2010
   hs-source-dirs: examples/turnstile
   ghc-options: -Wall
+
+source-repository head
+  type:     git
+  location: https://github.com/sdzx-1/typed-fsm

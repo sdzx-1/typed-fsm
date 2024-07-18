@@ -1,4 +1,4 @@
-{- | This package defines the typed protocol framework. This module re-exports
+{- | This package defines the typed-fsm framework. This module re-exports
 the public API.
 
 FSM stands for [Finite State Machine](https://en.wikipedia.org/wiki/Finite-state_machine).
