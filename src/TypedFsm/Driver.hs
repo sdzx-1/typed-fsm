@@ -41,7 +41,10 @@ data SomeOperate ts m a
 getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
 getSomeOperateSt (SomeOperate (_ :: Operate m (At a o) i)) = fromSing $ sing @i
 
-type OpResult ps m a = (Either (SomeOperate ps m a) a)
+data Result ps m a
+  = Finish a
+  | Cont (SomeOperate ps m a)
+  | forall t. NotMatchGenMsg (Sing (t :: ps))
 
 type Op ps state m o i = Operate (StateT state m) (At () (o :: ps)) (i :: ps)
 
@@ -56,16 +59,17 @@ runOp
   => State2GenMsg ps state event
   -> [event]
   -> Operate (StateT state m) (At a output) input
-  -> (StateT state m) (OpResult ps (StateT state m) a)
+  -> (StateT state m) (Result ps (StateT state m) a)
 runOp dmp evns = \case
-  IReturn (At a) -> pure (Right a)
+  IReturn (At a) -> pure (Finish a)
   LiftM m -> m Prelude.>>= runOp dmp evns
   In f -> do
-    case D.lookup (sing @input) dmp of
-      Nothing -> error "np"
+    let singInput = sing @input
+    case D.lookup singInput dmp of
+      Nothing -> pure (NotMatchGenMsg singInput)
       Just (GenMsg genMsg) -> loop evns
        where
-        loop [] = pure $ Left $ SomeOperate (In f)
+        loop [] = pure $ Cont $ SomeOperate (In f)
         loop (et : evns') = do
           state' <- get
           case genMsg state' et of

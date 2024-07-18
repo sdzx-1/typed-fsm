@@ -58,7 +58,9 @@ appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
   ma <- liftIO (atomically $ tryReadTChan chan)
   v <- runOp depMap (makeMyEvent ma events) fun
   case v of
-    Left fun1 -> do
+    Finish _ -> pure ()
+    NotMatchGenMsg si -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
+    Cont fun1 -> do
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
 
@@ -81,4 +83,3 @@ appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
       liftIO $ threadDelay (1000000 `div` 30)
 
       appLoop de chan depMap fun1
-    Right _ -> pure ()

@@ -47,7 +47,9 @@ appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
   -- liftIO $ print events
   v <- runOp atmDepMap (makeMyEvent events) fun
   case v of
-    Left fun1 -> do
+    Finish _ -> pure ()
+    NotMatchGenMsg si -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
+    Cont fun1 -> do
       let atmSt = getSomeOperateSt fun1
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
@@ -75,4 +77,3 @@ appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
       present renderer
       liftIO $ threadDelay (1000000 `div` 30)
       appLoop de fun1
-    Right _ -> pure ()

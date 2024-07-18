@@ -53,7 +53,7 @@ extra-doc-files:    CHANGELOG.md
 
 flag BuildExample
   description: Build mouse moniton example
-  default: True
+  default: False
 
 common warnings
     ghc-options: -Wall
@@ -122,7 +122,6 @@ executable atm
                , unordered-containers
                , dependent-map
                , dependent-sum
-               , dependent-sum-template
                , containers
                , microlens
                , microlens-mtl
