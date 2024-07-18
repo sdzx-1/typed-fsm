@@ -51,7 +51,7 @@ appLoop
   :: DrawEnv
   -> TChan ()
   -> State2GenMsg Motion MotionState MyEvent
-  -> SomeOp Motion MotionState IO
+  -> SomeOp Motion MotionState IO ()
   -> StateT MotionState IO ()
 appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
   events <- pollEvents

@@ -1,9 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
+
 {- | Running FSM
 
-runOp
+The core function is `runOp`, and the other functions are to make it work properly.
 -}
 module TypedFsm.Driver where
 
@@ -17,14 +18,41 @@ import Data.Singletons (Sing, SingI (..), SingKind (..))
 import TypedFsm.Core (Operate (..), StateTransMsg (Msg))
 import Unsafe.Coerce (unsafeCoerce)
 
-sOrdToGCompare
-  :: forall n (a :: n) (b :: n)
-   . (SOrd n)
-  => Sing a -> Sing b -> GOrdering a b
-sOrdToGCompare a b = case sCompare a b of
-  SEQ -> unsafeCoerce GEQ
-  SLT -> GLT
-  SGT -> GGT
+data SomeOperate ts m a
+  = forall (i :: ts) (o :: ts).
+    (SingI i) =>
+    SomeOperate (Operate m (At a o) i)
+
+getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
+getSomeOperateSt (SomeOperate (_ :: Operate m (At a o) i)) = fromSing $ sing @i
+
+{- | Reuslt of runOp
+
+* Finish, return val a
+* A wrapper for SomeOperate that returns the remaining computation when there is not enough input
+* There is no corresponding GenMsg function defined for some FSM states
+-}
+data Result ps m a
+  = Finish a
+  | Cont (SomeOperate ps m a)
+  | forall t. NotMatchGenMsg (Sing (t :: ps))
+
+{- | `Op` adds new assumptions based on `Operate`: assume that the internal monad contains at least a state monad.
+
+@
+type Op ps state m a o i = Operate (StateT state m) (At a (o :: ps)) (i :: ps)
+@
+
+`Op` contains two states, `ps` and `state`.
+
+`ps` represents the state of the state machine
+`state` represents the internal state.
+
+The external event needs to be converted to Msg.
+
+It is essentially a function `event -> Msg`, but this function is affected by both `ps` and `state`.
+-}
+type Op ps state m a o i = Operate (StateT state m) (At a (o :: ps)) (i :: ps)
 
 newtype GenMsg ps state event from
   = GenMsg (state -> event -> Maybe (SomeMsg ps from))
@@ -36,22 +64,16 @@ data SomeMsg ps from
     (SingI to) =>
     SomeMsg (Msg ps from to)
 
-data SomeOperate ts m a
-  = forall (i :: ts) (o :: ts).
-    (SingI i) =>
-    SomeOperate (Operate m (At a o) i)
+type SomeOp ps state m a = SomeOperate ps (StateT state m) a
 
-getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
-getSomeOperateSt (SomeOperate (_ :: Operate m (At a o) i)) = fromSing $ sing @i
-
-data Result ps m a
-  = Finish a
-  | Cont (SomeOperate ps m a)
-  | forall t. NotMatchGenMsg (Sing (t :: ps))
-
-type Op ps state m o i = Operate (StateT state m) (At () (o :: ps)) (i :: ps)
-
-type SomeOp ps state m = SomeOperate ps (StateT state m) ()
+sOrdToGCompare
+  :: forall n (a :: n) (b :: n)
+   . (SOrd n)
+  => Sing a -> Sing b -> GOrdering a b
+sOrdToGCompare a b = case sCompare a b of
+  SEQ -> unsafeCoerce GEQ
+  SLT -> GLT
+  SGT -> GGT
 
 runOp
   :: forall ps event state m a (input :: ps) (output :: ps)

@@ -30,7 +30,7 @@ myRegisterTimeout = do
     tk <- registerTimeout tm timeoutSize (atomically $ writeTChan chan ())
     pure (tm, tk)
 
-idelHandler :: Op Motion MotionState IO Exit Idle
+idelHandler :: Op Motion MotionState IO () Exit Idle
 idelHandler = I.do
   msg <- getInput
   case msg of
@@ -42,7 +42,7 @@ idelHandler = I.do
         pure (tm, tk, tms)
       overHandler tp
 
-overHandler :: (TimerManager, TimeoutKey, Timestamp) -> Op Motion MotionState IO Exit Over
+overHandler :: (TimerManager, TimeoutKey, Timestamp) -> Op Motion MotionState IO () Exit Over
 overHandler (tm, tk, oldtms) = I.do
   msg <- getInput
   case msg of
@@ -65,7 +65,7 @@ overHandler (tm, tk, oldtms) = I.do
         onHover .= Just (pos, [show oldtms, show pos])
       hoverHandler
 
-hoverHandler :: Op Motion MotionState IO Exit Hover
+hoverHandler :: Op Motion MotionState IO () Exit Hover
 hoverHandler = I.do
   msg <- getInput
   case msg of

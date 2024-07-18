@@ -41,7 +41,7 @@ main = do
     initInternState
   destroyWindow window
 
-appLoop :: DrawEnv -> SomeOp ATMSt InternalState IO -> StateT InternalState IO ()
+appLoop :: DrawEnv -> SomeOp ATMSt InternalState IO () -> StateT InternalState IO ()
 appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
   events <- pollEvents
   -- liftIO $ print events

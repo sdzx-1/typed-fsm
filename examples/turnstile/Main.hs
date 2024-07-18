@@ -42,7 +42,7 @@ instance GEq STurnSt where
 instance GCompare STurnSt where
   gcompare = sOrdToGCompare
 
-lockedHandler :: Op TurnSt Int IO Exit Locked
+lockedHandler :: Op TurnSt Int IO () Exit Locked
 lockedHandler = I.do
   msg <- getInput
   case msg of
@@ -56,7 +56,7 @@ lockedHandler = I.do
     ExitTurnSt -> I.do
       liftm $ liftIO $ putStrLn "Exit turnSt"
 
-unlockedHandler :: Op TurnSt Int IO Exit Unlocked
+unlockedHandler :: Op TurnSt Int IO () Exit Unlocked
 unlockedHandler = I.do
   msg <- getInput
   case msg of
