@@ -23,7 +23,7 @@ name:               typed-fsm
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis: A framework for strongly typed fsm
+synopsis: A framework for strongly typed FSM
 
 -- A longer description of the package.
 -- description:
@@ -63,9 +63,10 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules: Data.IFunctor
+    exposed-modules: TypedFsm
                    , TypedFsm.Core
                    , TypedFsm.Driver
+                   , Data.IFunctor
 
     -- Modules included in this library but not exported.
     -- other-modules:
