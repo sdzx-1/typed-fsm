@@ -32,7 +32,11 @@ Using typed-fsm will go through the following five steps:
 4. Construct functions from events to messages in different states
 5. Running status processing function
 
+Here are some examples:
 
+1. [turnstile](https://github.com/sdzx-1/typed-fsm/tree/main/examples/turnstile)
+2. [mouse motion](https://github.com/sdzx-1/typed-fsm/tree/main/examples/motion)
+3. [atm](https://github.com/sdzx-1/typed-fsm/tree/main/examples/ATM)
 -}
 module TypedFsm (
   -- * Defining and implementing FSM
