@@ -47,7 +47,3 @@ Using typed-fsm will go through the following five steps:
 4. Construct functions from events to messages in different states
 5. Running status processing function
 -}
-
-{- $running
-runOp
--}

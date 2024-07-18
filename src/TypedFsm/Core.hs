@@ -57,6 +57,6 @@ instance (Functor m) => IMonad (Operate m) where
 getInput :: forall ps m (from :: ps). (Functor m) => Operate m (Msg ps from) from
 getInput = In ireturn
 
--- | lifts the internal m, to Operate
+-- | lifts the internal `m a` to `Operate m (At a i) i'
 liftm :: forall ps m (mode :: ps) a. (Functor m, SingI mode) => m a -> Operate m (At a mode) mode
 liftm m = LiftM (returnAt <$> m)

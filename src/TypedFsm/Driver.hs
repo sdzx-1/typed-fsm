@@ -1,7 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
+{- | Running FSM
 
+runOp
+-}
 module TypedFsm.Driver where
 
 import Control.Monad.State as S (MonadState (get), StateT)
