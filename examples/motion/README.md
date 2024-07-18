@@ -1,5 +1,5 @@
 # Example explanation
-![example](../../data/png/hover.png)
+![example](../data/png/hover.png)
 
 > There is a box in the picture. When the mouse is outside the box, the status is Idle.
 > When the mouse moves inside the box, the status changes to Over.
@@ -22,7 +22,7 @@ data Motion
   deriving (Show)
 ```
 ## 2. Define state transfer messages
-![state trans msg](../../data/png/motion_trans_msg.png)
+![state trans msg](../data/png/motion_trans_msg.png)
 ```haskell
 instance StateTransMsg Motion where
   data Msg Motion from to where
@@ -176,4 +176,4 @@ mouseDepMap =
 
 
 # Run example
-cabal run motion  --flags="BuildExample"
+cabal run motion

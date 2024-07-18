@@ -3,4 +3,4 @@
 
 
 # Run example
-cabal run motion  --flags="BuildExample"
+cabal run motion
