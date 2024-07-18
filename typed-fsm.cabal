@@ -52,7 +52,7 @@ extra-doc-files:    CHANGELOG.md
 -- extra-source-files:
 
 flag BuildExample
-  description: Build mouse moniton example
+  description: Build examples
   default: False
 
 common warnings
@@ -63,9 +63,9 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Data.IFunctor
-                    , TypedFsm.Core
-                    , TypedFsm.Driver
+    exposed-modules: Data.IFunctor
+                   , TypedFsm.Core
+                   , TypedFsm.Driver
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -74,12 +74,11 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base >=4.17.0.0
-                    , dependent-map
-                    , dependent-sum
-                    , mtl
-                    , containers
-                    , singletons-base
+    build-depends: base >=4.20.0.0
+                 , dependent-map >= 0.4.0.0
+                 , dependent-sum >= 0.7.2.0
+                 , mtl >= 2.3.1
+                 , singletons-base >= 3.4
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -127,7 +126,7 @@ executable atm
                , microlens-mtl
                , microlens-th
                , mtl
-               , sdl2
+               , sdl2 >= 2.5.5.0
                , sdl2-ttf
                , stm
                , linear
@@ -167,5 +166,5 @@ test-suite typed-fsm-test
 
     -- Test dependencies.
     build-depends:
-        base >=4.17.0.0,
+        base >=4.20.0.0,
         typed-fsm
