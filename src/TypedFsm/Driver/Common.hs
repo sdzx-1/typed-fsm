@@ -16,8 +16,8 @@ data SomeOperate ts m a
     (SingI i) =>
     SomeOperate (Operate m (At a o) i)
 
-getSomeOperateSingeton :: (SingKind ts) => SomeOperate ts m a -> Sing ts
-getSomeOperateSingeton (SomeOperate (_ :: Operate m ia i)) =
+getSomeOperateSing :: (SingKind ts) => SomeOperate ts m a -> Sing (r :: ts)
+getSomeOperateSing (SomeOperate (_ :: Operate m ia i)) =
   unsafeCoerce $ sing @i
 
 getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
