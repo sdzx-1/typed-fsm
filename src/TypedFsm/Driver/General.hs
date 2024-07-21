@@ -28,22 +28,31 @@ anyToSomeMsg (AnyMsg (msg :: Msg ps from to)) =
 
 newtype UnexpectMsg ps = UnexpectMsg (AnyMsg ps)
 
+data UnexpectMsgHandler ps m
+  = Ignore
+  | IgnoreAndTrace (AnyMsg ps -> m ())
+  | Terminal
+
 runOperate
   :: forall ps m a (input :: ps) (output :: ps)
    . ( Monad m
      , SingI input
      , SEq ps
      )
-  => [AnyMsg ps]
+  => UnexpectMsgHandler ps m
+  -> [AnyMsg ps]
   -> Operate m (At a output) input
   -> m (Result ps (UnexpectMsg ps) m a)
-runOperate anyMsgs = \case
+runOperate unHandler anyMsgs = \case
   IReturn (At a) -> pure (Finish a)
-  LiftM m -> m >>= (runOperate anyMsgs)
+  LiftM m -> m >>= (runOperate unHandler anyMsgs)
   In f -> loop anyMsgs
    where
     loop [] = pure $ Cont $ SomeOperate (In f)
     loop (anyMsg : evns') = do
       case anyToSomeMsg @_ @input anyMsg of
-        Nothing -> pure (ErrorInfo $ UnexpectMsg anyMsg)
-        Just (SomeMsg msg) -> runOperate evns' (f msg)
+        Nothing -> case unHandler of
+          Ignore -> loop evns'
+          IgnoreAndTrace trace -> trace anyMsg >> loop evns'
+          Terminal -> pure (ErrorInfo $ UnexpectMsg anyMsg)
+        Just (SomeMsg msg) -> runOperate unHandler evns' (f msg)
