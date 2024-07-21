@@ -43,8 +43,12 @@ module TypedFsm (
   module TypedFsm.Core,
 
   -- * Running FSM
-  module TypedFsm.Driver,
+  module TypedFsm.Driver.Common,
+  module TypedFsm.Driver.General,
+  module TypedFsm.Driver.Op,
 ) where
 
 import TypedFsm.Core
-import TypedFsm.Driver
+import TypedFsm.Driver.Common
+import TypedFsm.Driver.General
+import TypedFsm.Driver.Op

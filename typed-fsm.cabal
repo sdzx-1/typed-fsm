@@ -70,7 +70,9 @@ library
     -- Modules exported by the library.
     exposed-modules: TypedFsm
                    , TypedFsm.Core
-                   , TypedFsm.Driver
+                   , TypedFsm.Driver.Common
+                   , TypedFsm.Driver.Op
+                   , TypedFsm.Driver.General
                    , Data.IFunctor
 
     -- Modules included in this library but not exported.
