@@ -84,12 +84,12 @@ eventDepMap =
     ]
 
 loop
-  :: Result TurnSt (StateT Int IO) ()
+  :: Result TurnSt (NotFoundGenMsg TurnSt) (StateT Int IO) ()
   -> StateT Int IO ()
 loop res = do
   case res of
     Finish _ -> liftIO $ putStrLn "Finish"
-    NotMatchGenMsg singst -> liftIO $ putStrLn $ "NotMatch GenMSg: " ++ show singst
+    ErrorInfo (NotFoundGenMsg (SomeSing singst)) -> liftIO $ putStrLn $ "NotFound GenMSg: " ++ show singst
     Cont sop@(SomeOperate op) -> do
       st <- liftIO $ do
         putStrLn $ "current state: " ++ show (getSomeOperateSt sop)

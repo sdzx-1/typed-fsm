@@ -15,8 +15,7 @@ import qualified Data.IFunctor as I
 import Data.Singletons (SingI (sing))
 import Lens.Micro.Mtl (use, (%=), (-=), (.=))
 import Type
-import TypedFsm.Core
-import TypedFsm.Driver
+import TypedFsm
 
 checkResult
   :: forall n

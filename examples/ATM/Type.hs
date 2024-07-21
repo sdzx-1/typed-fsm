@@ -28,8 +28,7 @@ import GHC.TypeError (TypeError)
 import GHC.TypeLits (ErrorMessage (..))
 import Lens.Micro.TH (makeLenses)
 import SDL
-import TypedFsm.Core (StateTransMsg (..))
-import TypedFsm.Driver (sOrdToGCompare)
+import TypedFsm
 
 $( singletons
     [d|

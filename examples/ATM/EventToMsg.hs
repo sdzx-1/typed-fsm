@@ -10,7 +10,7 @@ import Data.Dependent.Sum
 import Data.Singletons (SingI)
 import Lens.Micro
 import Type
-import TypedFsm.Driver
+import TypedFsm
 import Utils
 
 scEventHandler

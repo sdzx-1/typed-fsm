@@ -25,8 +25,7 @@ import Data.Singletons.Base.TH
 import Data.Type.Equality (TestEquality (testEquality))
 import Lens.Micro.TH
 import SDL
-import TypedFsm.Core
-import TypedFsm.Driver
+import TypedFsm
 
 $( singletons
     [d|

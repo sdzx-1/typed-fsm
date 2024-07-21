@@ -17,7 +17,7 @@ import Lens.Micro.Mtl
 import SDL
 import Type
 import TypedFsm.Core
-import TypedFsm.Driver
+import TypedFsm
 
 timeoutSize :: Int
 timeoutSize = 400_000

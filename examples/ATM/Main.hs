@@ -19,13 +19,14 @@ import Control.Monad (forM_)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State (StateT (runStateT))
 import qualified Control.Monad.State as M
+import Data.Singletons (SomeSing (SomeSing))
 import EventToMsg
 import Handler
 import Lens.Micro ((^.))
 import SDL
 import qualified SDL.Font as Font
 import Type
-import TypedFsm.Driver
+import TypedFsm
 import Utils
 
 main :: IO ()
@@ -49,7 +50,8 @@ appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
   v <- runOp atmDepMap (makeMyEvent events) fun
   case v of
     Finish _ -> pure ()
-    NotMatchGenMsg si -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
+    ErrorInfo (NotFoundGenMsg (SomeSing si)) ->
+      liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
     Cont fun1 -> do
       let atmSt = getSomeOperateSt fun1
       rendererDrawColor renderer $= V4 0 0 0 255

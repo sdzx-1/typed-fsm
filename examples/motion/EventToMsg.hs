@@ -5,7 +5,7 @@ module EventToMsg where
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum
 import Type
-import TypedFsm.Driver
+import TypedFsm
 import Utils
 
 mouseDepMap :: State2GenMsg Motion MotionState MyEvent

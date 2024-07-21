@@ -17,12 +17,13 @@ import Control.Concurrent.STM.TChan
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State (StateT (runStateT))
 import qualified Control.Monad.State as M
+import Data.Singletons (SomeSing (..))
 import EventToMsg
 import Handler
 import SDL
 import qualified SDL.Font as Font
 import Type
-import TypedFsm.Driver
+import TypedFsm
 import Utils
 
 main :: IO ()
@@ -59,7 +60,7 @@ appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
   v <- runOp depMap (makeMyEvent ma events) fun
   case v of
     Finish _ -> pure ()
-    NotMatchGenMsg si -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
+    ErrorInfo (NotFoundGenMsg (SomeSing si)) -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
     Cont fun1 -> do
       rendererDrawColor renderer $= V4 0 0 0 255
       clear renderer
