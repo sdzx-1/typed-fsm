@@ -1,5 +1,6 @@
 # Revision history for typed-fsm
 
-## 0.1.0.0 -- YYYY-mm-dd
+## 0.2.0.1-- 2024-7-22
 
-* First version. Released on an unsuspecting world.
+* Fix getSomeOperateSing
+* Improve runOperate
