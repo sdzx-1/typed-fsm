@@ -13,25 +13,22 @@ import Unsafe.Coerce (unsafeCoerce)
 
 data SomeOperate ts m a
   = forall (i :: ts) (o :: ts).
-    (SingI i) =>
-    SomeOperate (Operate m (At a o) i)
+    SomeOperate (Sing i) (Operate m (At a o) i)
 
 getSomeOperateSing :: (SingKind ts) => SomeOperate ts m a -> Sing (r :: ts)
-getSomeOperateSing (SomeOperate (_ :: Operate m ia i)) =
-  unsafeCoerce $ sing @i
+getSomeOperateSing (SomeOperate si (_ :: Operate m ia i)) =
+  unsafeCoerce si
 
 getSomeOperateSt :: (SingKind ts) => SomeOperate ts m a -> Demote ts
-getSomeOperateSt (SomeOperate (_ :: Operate m ia i)) = fromSing $ sing @i
+getSomeOperateSt (SomeOperate si (_ :: Operate m ia i)) = fromSing $ si
 
 data SomeMsg ps from
   = forall (to :: ps).
-    (SingI to) =>
-    SomeMsg (Msg ps from to)
+    SomeMsg (Sing to) (Msg ps from to)
 
 data AnyMsg ps
   = forall (from :: ps) (to :: ps).
-    (SingI from, SingI to) =>
-    AnyMsg (Msg ps from to)
+    AnyMsg (Sing from) (Sing to) (Msg ps from to)
 
 {- | Reuslt of run FSM
 

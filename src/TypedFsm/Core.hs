@@ -12,7 +12,7 @@ import Data.IFunctor (
  )
 
 import Data.Kind (Type)
-import Data.Singletons (SingI)
+import Data.Singletons (Sing, SingI (..))
 
 -- | The state-transition type class
 class StateTransMsg ps where
@@ -33,8 +33,8 @@ The overall behavior is as follows: constantly reading messages from the outside
 data Operate :: (Type -> Type) -> (ps -> Type) -> ps -> Type where
   IReturn :: ia (mode :: ps) -> Operate m ia mode
   LiftM
-    :: (SingI mode, SingI mode')
-    => m (Operate m ia mode')
+    :: Sing mode'
+    -> m (Operate m ia mode')
     -> Operate m ia mode
   In
     :: forall ps m (from :: ps) ia
@@ -44,13 +44,13 @@ data Operate :: (Type -> Type) -> (ps -> Type) -> ps -> Type where
 instance (Functor m) => IFunctor (Operate m) where
   imap f = \case
     IReturn ia -> IReturn (f ia)
-    LiftM f' -> LiftM (fmap (imap f) f')
+    LiftM s f' -> LiftM s (fmap (imap f) f')
     In cont -> In (imap f . cont)
 instance (Functor m) => IMonad (Operate m) where
   ireturn = IReturn
   ibind f = \case
     IReturn ia -> (f ia)
-    LiftM m -> LiftM (fmap (ibind f) m)
+    LiftM s m -> LiftM s (fmap (ibind f) m)
     In cont -> In (ibind f . cont)
 
 -- | get messages from outside
@@ -59,4 +59,4 @@ getInput = In ireturn
 
 -- | lifts the internal `m a` to `Operate m (At a i) i'
 liftm :: forall ps m (mode :: ps) a. (Functor m, SingI mode) => m a -> Operate m (At a mode) mode
-liftm m = LiftM (returnAt <$> m)
+liftm m = LiftM sing (returnAt <$> m)

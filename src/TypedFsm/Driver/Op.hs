@@ -16,7 +16,7 @@ import Data.Dependent.Map qualified as D
 import Data.GADT.Compare (GCompare, GOrdering (..))
 import Data.IFunctor (At (..))
 import Data.Ord.Singletons (SOrd (sCompare), SOrdering (..))
-import Data.Singletons (Sing, SingI (..), SomeSing (..))
+import Data.Singletons (Sing, SomeSing (..))
 import TypedFsm.Core (Operate (..))
 import TypedFsm.Driver.Common
 import Unsafe.Coerce (unsafeCoerce)
@@ -58,26 +58,24 @@ newtype NotFoundGenMsg ps = NotFoundGenMsg (SomeSing ps)
 
 runOp
   :: forall ps event state m a (input :: ps) (output :: ps)
-   . ( SingI input
-     , GCompare (Sing @ps)
-     )
+   . (GCompare (Sing @ps))
   => (Monad m)
   => State2GenMsg ps state event
   -> [event]
+  -> Sing input
   -> Operate (StateT state m) (At a output) input
   -> (StateT state m) (Result ps (NotFoundGenMsg ps) (StateT state m) a)
-runOp dmp evns = \case
+runOp dmp evns sinput = \case
   IReturn (At a) -> pure (Finish a)
-  LiftM m -> m >>= runOp dmp evns
+  LiftM sinput' m -> m >>= runOp dmp evns sinput'
   In f -> do
-    let singInput = sing @input
-    case D.lookup singInput dmp of
-      Nothing -> pure (ErrorInfo $ NotFoundGenMsg $ SomeSing singInput)
+    case D.lookup sinput dmp of
+      Nothing -> pure (ErrorInfo $ NotFoundGenMsg $ SomeSing sinput)
       Just (GenMsg genMsg) -> loop evns
        where
-        loop [] = pure $ Cont $ SomeOperate (In f)
+        loop [] = pure $ Cont $ SomeOperate sinput (In f)
         loop (et : evns') = do
           state' <- get
           case genMsg state' et of
             Nothing -> loop evns'
-            Just (SomeMsg msg) -> runOp dmp evns' (f msg)
+            Just (SomeMsg sto msg) -> runOp dmp evns' sto (f msg)
