@@ -1,5 +1,9 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module EventToMsg where
@@ -7,11 +11,16 @@ module EventToMsg where
 import Data.Data (Proxy (..))
 import qualified Data.Dependent.Map as D
 import Data.Dependent.Sum
-import Data.Singletons (SingI)
+import Data.Singletons (SingI (..))
 import Lens.Micro
 import Type
 import TypedFsm
 import Utils
+
+mkSomeMsg
+  :: forall ps (from :: ps) (to :: ps)
+   . (SingI to) => Msg ps from to -> Maybe (SomeMsg ps from)
+mkSomeMsg msg = Just (SomeMsg (sing @to) msg)
 
 scEventHandler
   :: (SingI n, Less3 n)
@@ -22,16 +31,16 @@ scEventHandler _ =
     ( \ist event -> case event of
         MyMouseLeftButtonClick (fmap fromIntegral -> p) ->
           if
-            | (ist ^. ejectLabel . rect) `contains` p -> Just (SomeMsg CIEject)
+            | (ist ^. ejectLabel . rect) `contains` p -> mkSomeMsg CIEject
             | otherwise ->
                 let nls = ist ^. nlabels
                     rs = filter (\(NLabel r _) -> r `contains` p) nls
                  in case rs of
                       [] -> Nothing
                       NLabel _r i : _ -> case i of
-                        10 -> Just $ SomeMsg DelectNum
-                        11 -> Just $ SomeMsg (CheckPIN $ reverse (ist ^. tmpPin))
-                        _ -> Just $ SomeMsg $ AddNum i
+                        10 -> mkSomeMsg DelectNum
+                        11 -> mkSomeMsg (CheckPIN $ reverse (ist ^. tmpPin))
+                        _ -> mkSomeMsg $ AddNum i
     )
 
 atmDepMap :: State2GenMsg ATMSt InternalState MyEvent
@@ -42,8 +51,8 @@ atmDepMap =
           ( \ist event -> case event of
               MyMouseLeftButtonClick (fmap fromIntegral -> p) ->
                 ( if
-                    | (ist ^. insCardLabel . rect) `contains` p -> Just (SomeMsg InsertCard)
-                    | (ist ^. exitLabel . rect) `contains` p -> Just (SomeMsg ExitATM)
+                    | (ist ^. insCardLabel . rect) `contains` p -> mkSomeMsg InsertCard
+                    | (ist ^. exitLabel . rect) `contains` p -> mkSomeMsg ExitATM
                     | otherwise -> Nothing
                 )
           )
@@ -55,9 +64,9 @@ atmDepMap =
           ( \ist event -> case event of
               MyMouseLeftButtonClick (fmap fromIntegral -> p) ->
                 if
-                  | (ist ^. ejectLabel . rect) `contains` p -> Just (SomeMsg SEject)
-                  | (ist ^. getAmountLabel . rect) `contains` p -> Just (SomeMsg GetAmount)
-                  | (ist ^. dispenseLabel . rect) `contains` p -> Just (SomeMsg (Dispense 100))
+                  | (ist ^. ejectLabel . rect) `contains` p -> mkSomeMsg SEject
+                  | (ist ^. getAmountLabel . rect) `contains` p -> mkSomeMsg GetAmount
+                  | (ist ^. dispenseLabel . rect) `contains` p -> mkSomeMsg (Dispense 100)
                   | otherwise -> Nothing
           )
     ]

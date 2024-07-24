@@ -39,15 +39,15 @@ main = do
   ccref <- initCharCache
 
   runStateT
-    (appLoop (DrawEnv renderer font ccref) (SomeOperate readyHandler))
+    (appLoop (DrawEnv renderer font ccref) (SomeOperate SReady readyHandler))
     initInternState
   destroyWindow window
 
 appLoop :: DrawEnv -> SomeOp ATMSt InternalState IO () -> StateT InternalState IO ()
-appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate fun) = do
+appLoop de@(DrawEnv renderer _font _ccref) (SomeOperate sinput fun) = do
   events <- pollEvents
   -- liftIO $ print events
-  v <- runOp atmDepMap (makeMyEvent events) fun
+  v <- runOp atmDepMap (makeMyEvent events) sinput fun
   case v of
     Finish _ -> pure ()
     ErrorInfo (NotFoundGenMsg (SomeSing si)) ->

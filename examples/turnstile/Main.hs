@@ -71,14 +71,14 @@ eventDepMap =
     [ SLocked
         :=> GenMsg
           ( \_ ev -> case ev of
-              "coin" -> Just $ SomeMsg Coin
-              "exit" -> Just $ SomeMsg ExitTurnSt
+              "coin" -> Just $ SomeMsg sing Coin
+              "exit" -> Just $ SomeMsg sing ExitTurnSt
               _ -> Nothing
           )
     , SUnlocked
         :=> GenMsg
           ( \_ ev -> case ev of
-              "push" -> Just $ SomeMsg Push
+              "push" -> Just $ SomeMsg sing Push
               _ -> Nothing
           )
     ]
@@ -90,15 +90,15 @@ loop res = do
   case res of
     Finish _ -> liftIO $ putStrLn "Finish"
     ErrorInfo (NotFoundGenMsg (SomeSing singst)) -> liftIO $ putStrLn $ "NotFound GenMSg: " ++ show singst
-    Cont sop@(SomeOperate op) -> do
+    Cont sop@(SomeOperate sinput op) -> do
       st <- liftIO $ do
         putStrLn $ "current state: " ++ show (getSomeOperateSt sop)
         putStrLn "input command:"
         getLine
-      nres <- runOp eventDepMap [st] op
+      nres <- runOp eventDepMap [st] sinput op
       loop nres
 
 main :: IO ()
 main = do
   putStrLn "start loop"
-  void $ runStateT (loop (Cont $ SomeOperate lockedHandler)) 0
+  void $ runStateT (loop (Cont $ SomeOperate sing lockedHandler)) 0

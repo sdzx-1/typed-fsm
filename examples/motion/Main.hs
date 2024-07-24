@@ -37,7 +37,7 @@ main = do
   chan <- newTChanIO @()
 
   runStateT
-    (appLoop (DrawEnv renderer font ccref) chan mouseDepMap (SomeOperate idelHandler))
+    (appLoop (DrawEnv renderer font ccref) chan mouseDepMap (SomeOperate SIdle idelHandler))
     (MotionState (Rect 100 100 400 400) chan (Point 0 0) Nothing)
 
   destroyWindow window
@@ -54,10 +54,10 @@ appLoop
   -> State2GenMsg Motion MotionState MyEvent
   -> SomeOp Motion MotionState IO ()
   -> StateT MotionState IO ()
-appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate fun) = do
+appLoop de@(DrawEnv renderer _font _ccref) chan depMap (SomeOperate sinput fun) = do
   events <- pollEvents
   ma <- liftIO (atomically $ tryReadTChan chan)
-  v <- runOp depMap (makeMyEvent ma events) fun
+  v <- runOp depMap (makeMyEvent ma events) sinput fun
   case v of
     Finish _ -> pure ()
     ErrorInfo (NotFoundGenMsg (SomeSing si)) -> liftIO $ putStrLn $ "error: not match GenMsg " ++ show si
