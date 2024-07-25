@@ -7,7 +7,7 @@
 module TypedFsm.Driver.Common where
 
 import Data.IFunctor (At (..))
-import Data.Singletons (Sing, SingI (..), SingKind (..))
+import Data.Singletons (Sing, SingKind (..))
 import TypedFsm.Core (Operate (..), StateTransMsg (Msg))
 import Unsafe.Coerce (unsafeCoerce)
 
