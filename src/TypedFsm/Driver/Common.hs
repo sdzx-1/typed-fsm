@@ -15,7 +15,7 @@ data SomeOperate ts m a
   = forall (i :: ts) (o :: ts).
     SomeOperate (Sing i) (Operate m (At a o) i)
 
-getSomeOperateSing :: (SingKind ts) => SomeOperate ts m a -> Sing (r :: ts)
+getSomeOperateSing :: SomeOperate ts m a -> Sing (r :: ts)
 getSomeOperateSing (SomeOperate si (_ :: Operate m ia i)) =
   unsafeCoerce si
 
