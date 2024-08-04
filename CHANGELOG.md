@@ -1,5 +1,8 @@
 # Revision history for typed-fsm
 
+## 0.3.0.1-- 2024-8-04
+* Fix getSomeOperateSing remvoe (SingKind ts) Constraint
+
 ## 0.3.0.0-- 2024-7-25
 * Remove the SingI constraints from SomeMsg and AnyMsg.
 * Modify the definition of LiftM and remove the SingI constraints.
