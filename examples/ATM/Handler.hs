@@ -25,8 +25,8 @@ checkResult
 checkResult i = I.do
   At userPin <- liftm $ use pin
   if i == userPin
-    then LiftM sing $ pure (ireturn Correct)
-    else LiftM sing $ pure (ireturn (Incorrect @n))
+    then liftConstr Correct
+    else liftConstr (Incorrect @n)
 
 checkPinFun
   :: forall (n :: N)
@@ -40,10 +40,10 @@ checkPinFun i = I.do
     sn@(SS (SS (SS SZ))) -> I.do
       At userPin <- liftm $ use pin
       if i == userPin
-        then LiftM sing $ pure (ireturn Correct)
-        else LiftM sing $ do
-          liftIO $ putStrLn "-> test 3 times, eject card!"
-          pure (ireturn (EjectCard sn))
+        then liftConstr Correct
+        else I.do
+          liftm $ liftIO $ putStrLn "-> test 3 times, eject card!"
+          liftConstr (EjectCard sn)
     _ -> error "np"
 
 readyHandler :: Op ATMSt InternalState IO () Exit Ready

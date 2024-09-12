@@ -60,3 +60,6 @@ getInput = In ireturn
 -- | lifts the internal `m a` to `Operate m (At a i) i'
 liftm :: forall ps m (mode :: ps) a. (Functor m, SingI mode) => m a -> Operate m (At a mode) mode
 liftm m = LiftM sing (returnAt <$> m)
+
+liftConstr :: (SingI st', Applicative m) => ia st' -> Operate m ia st
+liftConstr a = LiftM sing (pure $ ireturn a)
