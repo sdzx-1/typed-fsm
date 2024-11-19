@@ -14,3 +14,6 @@ Advantages of type-fsm
   + With the help of the type system, we can define many state processing functions and then call each other recursively with confidence.
 
 4. There is a sanity check. If you miss some items for pattern matching, the compiler will issue a warning, and there will also be a warning for invalid items.
+
+
+[Advantages of type-fsm](https://discourse.haskell.org/t/advantages-of-type-fsm/9679)
